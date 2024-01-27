@@ -1233,7 +1233,7 @@ function User() {
     const doc = new jsPDF();
     doc.text("List of User", 20, 10);
     doc.autoTable({ html: "#userTable" });
-    doc.text("Grand Total : " + pesoFormat, 15, 280);
+    doc.text("Grand Total : " + "Php " + pesoFormat.slice(1, 10), 15, 280);
     doc.text("_________________", 15, 281);
     doc.save("users.pdf");
   };

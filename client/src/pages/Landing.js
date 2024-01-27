@@ -110,6 +110,7 @@ function Landing() {
             style: "currency",
             currency: "PHP",
           }).format(t);
+          console.log(pesoFormat.length);
           setMontlySubscriptionSales(pesoFormat);
         } else {
           setMontlySubscriptionSales("No data");
