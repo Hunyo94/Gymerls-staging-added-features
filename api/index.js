@@ -10,22 +10,22 @@ app.use(cors());
 app.use(express.json());
 
 // LOCAL ENV
-var db = mysql.createPool({
-  connectionLimit: 10,
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "gymerls-db",
-});
-
-// STAGING ENV
 // var db = mysql.createPool({
 //   connectionLimit: 10,
-//   host: "bifwaadaxyrl1t0hvqjd-mysql.services.clever-cloud.com",
-//   user: "us9quea2nxh3qawk",
-//   password: "8CzD1cmZ91BpcBgeRDsh",
-//   database: "bifwaadaxyrl1t0hvqjd",
+//   host: "localhost",
+//   user: "root",
+//   password: "",
+//   database: "gymerls-db",
 // });
+
+// STAGING ENV
+var db = mysql.createPool({
+  connectionLimit: 10,
+  host: "bhpkgks7swlwl1zrnvta-mysql.services.clever-cloud.coms",
+  user: "uo06jrqvwzwursra",
+  password: "uo06jrqvwzwursra",
+  database: "bhpkgks7swlwl1zrnvta",
+});
 
 // // LIVE ENV
 // var db = mysql.createPool({
