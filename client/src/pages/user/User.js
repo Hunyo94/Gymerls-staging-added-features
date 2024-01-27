@@ -174,7 +174,7 @@ function User() {
   };
 
   const populateRoleInput = () => {
-    fetch("http://localhost:3031/api/roles")
+    fetch("https://gymerls-staging-server.vercel.app/api/roles")
       .then((response) => response.json())
       .then((data) => {
         setRoles(data);
@@ -195,7 +195,7 @@ function User() {
       allowOutsideClick: false,
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch("http://localhost:3031/api/register", {
+        fetch("https://gymerls-staging-server.vercel.app/api/register", {
           method: "POST",
           headers: {
             "Content-type": "application/json",
@@ -241,7 +241,7 @@ function User() {
     setUsernameIsValid(true);
     setIsVisible(true);
     if (username.length >= 5) {
-      fetch("http://localhost:3031/api/validate-user", {
+      fetch("https://gymerls-staging-server.vercel.app/api/validate-user", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -268,7 +268,7 @@ function User() {
     const formattedStartDate = formatDate(startDate);
     const formattedEndDate = formatDate(endDate);
 
-    fetch("http://localhost:3031/api/create-user-profile", {
+    fetch("https://gymerls-staging-server.vercel.app/api/create-user-profile", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -300,7 +300,7 @@ function User() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetch("http://localhost:3031/api/users")
+      fetch("https://gymerls-staging-server.vercel.app/api/users")
         .then((response) => response.json())
         .then((data) => {
           setUsers(data);
@@ -322,15 +322,18 @@ function User() {
 
   const handleClickOpenModalUpdate = (user_name) => {
     setOpenModalUpdate(true);
-    fetch("http://localhost:3031/api/get-user-by-username", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        username: user_name,
-      }),
-    })
+    fetch(
+      "https://gymerls-staging-server.vercel.app/api/get-user-by-username",
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          username: user_name,
+        }),
+      }
+    )
       .then((res) => res.json())
       .then((result) => {
         const bdate = formatDate(result[0].birthdate);
@@ -378,7 +381,7 @@ function User() {
       allowOutsideClick: false,
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch("http://localhost:3031/api/update-user", {
+        fetch("https://gymerls-staging-server.vercel.app/api/update-user", {
           method: "PATCH",
           headers: {
             "Content-type": "application/json",
@@ -426,7 +429,7 @@ function User() {
     setMealPlanUser(username);
     setOpenModalMealPlanning(true);
 
-    fetch("http://localhost:3031/api/meal-plan", {
+    fetch("https://gymerls-staging-server.vercel.app/api/meal-plan", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -503,36 +506,39 @@ function User() {
     setIsBtnLoading(true);
     const data = new FormData(event.currentTarget);
 
-    fetch("http://localhost:3031/api/create-meal-planning", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        username: mealPlanUser,
-        sun_bf_meal: data.get("sunday_breakfast"),
-        sun_lunch_meal: data.get("sunday_lunch"),
-        sun_dinner_meal: data.get("sunday_dinner"),
-        mon_bf_meal: data.get("monday_breakfast"),
-        mon_lunch_meal: data.get("monday_lunch"),
-        mon_dinner_meal: data.get("monday_dinner"),
-        tue_bf_meal: data.get("tuesday_breakfast"),
-        tue_lunch_meal: data.get("tuesday_lunch"),
-        tue_dinner_meal: data.get("tuesday_dinner"),
-        wed_bf_meal: data.get("wednesday_breakfast"),
-        wed_lunch_meal: data.get("wednesday_lunch"),
-        wed_dinner_meal: data.get("wednesday_dinner"),
-        thurs_bf_meal: data.get("thursday_breakfast"),
-        thurs_lunch_meal: data.get("thursday_lunch"),
-        thurs_dinner_meal: data.get("thursday_dinner"),
-        fri_bf_meal: data.get("friday_breakfast"),
-        fri_lunch_meal: data.get("friday_lunch"),
-        fri_dinner_meal: data.get("friday_dinner"),
-        sat_bf_meal: data.get("saturday_breakfast"),
-        sat_lunch_meal: data.get("saturday_lunch"),
-        sat_dinner_meal: data.get("saturday_dinner"),
-      }),
-    })
+    fetch(
+      "https://gymerls-staging-server.vercel.app/api/create-meal-planning",
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          username: mealPlanUser,
+          sun_bf_meal: data.get("sunday_breakfast"),
+          sun_lunch_meal: data.get("sunday_lunch"),
+          sun_dinner_meal: data.get("sunday_dinner"),
+          mon_bf_meal: data.get("monday_breakfast"),
+          mon_lunch_meal: data.get("monday_lunch"),
+          mon_dinner_meal: data.get("monday_dinner"),
+          tue_bf_meal: data.get("tuesday_breakfast"),
+          tue_lunch_meal: data.get("tuesday_lunch"),
+          tue_dinner_meal: data.get("tuesday_dinner"),
+          wed_bf_meal: data.get("wednesday_breakfast"),
+          wed_lunch_meal: data.get("wednesday_lunch"),
+          wed_dinner_meal: data.get("wednesday_dinner"),
+          thurs_bf_meal: data.get("thursday_breakfast"),
+          thurs_lunch_meal: data.get("thursday_lunch"),
+          thurs_dinner_meal: data.get("thursday_dinner"),
+          fri_bf_meal: data.get("friday_breakfast"),
+          fri_lunch_meal: data.get("friday_lunch"),
+          fri_dinner_meal: data.get("friday_dinner"),
+          sat_bf_meal: data.get("saturday_breakfast"),
+          sat_lunch_meal: data.get("saturday_lunch"),
+          sat_dinner_meal: data.get("saturday_dinner"),
+        }),
+      }
+    )
       .then((res) => res.json())
       .then((result) => {
         Swal.fire({
@@ -561,36 +567,39 @@ function User() {
       allowOutsideClick: false,
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch("http://localhost:3031/api/update-meal-planning", {
-          method: "PATCH",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify({
-            sun_bf_meal: data.get("sunday_breakfast"),
-            sun_lunch_meal: data.get("sunday_lunch"),
-            sun_dinner_meal: data.get("sunday_dinner"),
-            mon_bf_meal: data.get("monday_breakfast"),
-            mon_lunch_meal: data.get("monday_lunch"),
-            mon_dinner_meal: data.get("monday_dinner"),
-            tue_bf_meal: data.get("tuesday_breakfast"),
-            tue_lunch_meal: data.get("tuesday_lunch"),
-            tue_dinner_meal: data.get("tuesday_dinner"),
-            wed_bf_meal: data.get("wednesday_breakfast"),
-            wed_lunch_meal: data.get("wednesday_lunch"),
-            wed_dinner_meal: data.get("wednesday_dinner"),
-            thurs_bf_meal: data.get("thursday_breakfast"),
-            thurs_lunch_meal: data.get("thursday_lunch"),
-            thurs_dinner_meal: data.get("thursday_dinner"),
-            fri_bf_meal: data.get("friday_breakfast"),
-            fri_lunch_meal: data.get("friday_lunch"),
-            fri_dinner_meal: data.get("friday_dinner"),
-            sat_bf_meal: data.get("saturday_breakfast"),
-            sat_lunch_meal: data.get("saturday_lunch"),
-            sat_dinner_meal: data.get("saturday_dinner"),
-            username: mealPlanUser,
-          }),
-        })
+        fetch(
+          "https://gymerls-staging-server.vercel.app/api/update-meal-planning",
+          {
+            method: "PATCH",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+              sun_bf_meal: data.get("sunday_breakfast"),
+              sun_lunch_meal: data.get("sunday_lunch"),
+              sun_dinner_meal: data.get("sunday_dinner"),
+              mon_bf_meal: data.get("monday_breakfast"),
+              mon_lunch_meal: data.get("monday_lunch"),
+              mon_dinner_meal: data.get("monday_dinner"),
+              tue_bf_meal: data.get("tuesday_breakfast"),
+              tue_lunch_meal: data.get("tuesday_lunch"),
+              tue_dinner_meal: data.get("tuesday_dinner"),
+              wed_bf_meal: data.get("wednesday_breakfast"),
+              wed_lunch_meal: data.get("wednesday_lunch"),
+              wed_dinner_meal: data.get("wednesday_dinner"),
+              thurs_bf_meal: data.get("thursday_breakfast"),
+              thurs_lunch_meal: data.get("thursday_lunch"),
+              thurs_dinner_meal: data.get("thursday_dinner"),
+              fri_bf_meal: data.get("friday_breakfast"),
+              fri_lunch_meal: data.get("friday_lunch"),
+              fri_dinner_meal: data.get("friday_dinner"),
+              sat_bf_meal: data.get("saturday_breakfast"),
+              sat_lunch_meal: data.get("saturday_lunch"),
+              sat_dinner_meal: data.get("saturday_dinner"),
+              username: mealPlanUser,
+            }),
+          }
+        )
           .then((res) => res.json())
           .then((result) => {
             Swal.fire({

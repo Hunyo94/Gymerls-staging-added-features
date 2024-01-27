@@ -25,7 +25,7 @@ function MealPlanning() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-      fetch("http://localhost:3031/api/meal-plan", {
+      fetch("https://gymerls-staging-server.vercel.app/api/meal-plan", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -45,15 +45,18 @@ function MealPlanning() {
         });
     }, 3000);
 
-    fetch("http://localhost:3031/api/get-user-by-username", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        username: localStorage.getItem("username"),
-      }),
-    })
+    fetch(
+      "https://gymerls-staging-server.vercel.app/api/get-user-by-username",
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          username: localStorage.getItem("username"),
+        }),
+      }
+    )
       .then((res) => res.json())
       .then((result) => {
         for (let item of result) {

@@ -36,15 +36,18 @@ function Settings() {
     useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3031/api/get-admin-by-username", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        username: localStorage.getItem("username"),
-      }),
-    })
+    fetch(
+      "https://gymerls-staging-server.vercel.app/api/get-admin-by-username",
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          username: localStorage.getItem("username"),
+        }),
+      }
+    )
       .then((res) => res.json())
       .then((result) => {
         setUserProfile(result);
@@ -73,16 +76,19 @@ function Settings() {
             timer: 1500,
           });
         } else {
-          fetch("http://localhost:3031/api/update-password", {
-            method: "PATCH",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-              password: password,
-              username: localStorage.getItem("username"),
-            }),
-          })
+          fetch(
+            "https://gymerls-staging-server.vercel.app/api/update-password",
+            {
+              method: "PATCH",
+              headers: {
+                "Content-type": "application/json",
+              },
+              body: JSON.stringify({
+                password: password,
+                username: localStorage.getItem("username"),
+              }),
+            }
+          )
             .then((res) => res.json())
             .then((result) => {
               userLog(localStorage.getItem("username"), "Update", "password");
@@ -111,7 +117,7 @@ function Settings() {
 
   const userLog = (author, action, event) => {
     getIpAddress(function (callback) {
-      fetch("http://localhost:3031/api/insert-log", {
+      fetch("https://gymerls-staging-server.vercel.app/api/insert-log", {
         method: "POST",
         headers: {
           "Content-type": "application/json",

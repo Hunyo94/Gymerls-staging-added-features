@@ -192,15 +192,18 @@ function Reservation() {
     setCurrentUserId(id);
     getReservationByDate(date);
     setOpenModalUpdate(true);
-    fetch("http://localhost:3031/api/get-reservation-by-id", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        id: id,
-      }),
-    })
+    fetch(
+      "https://gymerls-staging-server.vercel.app/api/get-reservation-by-id",
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          id: id,
+        }),
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         setUpdateUsername(data[0].username);
@@ -229,7 +232,7 @@ function Reservation() {
     getReservationByDate(reservationDate);
     handleTime();
     setOpenCreateModal(true);
-    fetch("http://localhost:3031/api/user-membership")
+    fetch("https://gymerls-staging-server.vercel.app/api/user-membership")
       .then((response) => response.json())
       .then((data) => {
         setListOfUser(data);
@@ -240,7 +243,7 @@ function Reservation() {
     var formattedDate = formatDate(date);
 
     fetch(
-      "http://localhost:3031/api/get-reservation-by-date-and-status-is-confirmed",
+      "https://gymerls-staging-server.vercel.app/api/get-reservation-by-date-and-status-is-confirmed",
       {
         method: "POST",
         headers: {
@@ -315,15 +318,18 @@ function Reservation() {
   useEffect(() => {
     const timer = setTimeout(() => {
       var formattedDate = formatDate(new Date());
-      fetch("http://localhost:3031/api/get-reservation-by-date", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          reservation_date: formattedDate,
-        }),
-      })
+      fetch(
+        "https://gymerls-staging-server.vercel.app/api/get-reservation-by-date",
+        {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            reservation_date: formattedDate,
+          }),
+        }
+      )
         .then((response) => response.json())
         .then((data) => {
           setReservationData(data);
@@ -372,15 +378,18 @@ function Reservation() {
     setSelectStatus("All");
     var formattedDate = formatDate(date);
 
-    fetch("http://localhost:3031/api/get-reservation-by-date", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        reservation_date: formattedDate,
-      }),
-    })
+    fetch(
+      "https://gymerls-staging-server.vercel.app/api/get-reservation-by-date",
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          reservation_date: formattedDate,
+        }),
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         if (data.length === 0) {
@@ -401,19 +410,22 @@ function Reservation() {
       // filteredDataByDate(filterByDate === null ? new Date() : filterByDate);
       window.location.reload(false);
     } else {
-      fetch("http://localhost:3031/api/get-reservation-by-date-and-status", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          reservation_date:
-            filterByDate === null
-              ? formatDate(new Date())
-              : formatDate(filterByDate),
-          status: status,
-        }),
-      })
+      fetch(
+        "https://gymerls-staging-server.vercel.app/api/get-reservation-by-date-and-status",
+        {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            reservation_date:
+              filterByDate === null
+                ? formatDate(new Date())
+                : formatDate(filterByDate),
+            status: status,
+          }),
+        }
+      )
         .then((res) => res.json())
         .then((data) => {
           if (data.length === 0) {
@@ -565,21 +577,24 @@ function Reservation() {
               allowOutsideClick: false,
             }).then((result) => {
               if (result.isConfirmed) {
-                fetch("http://localhost:3031/api/create-reservation", {
-                  method: "POST",
-                  headers: {
-                    "Content-type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    username: localStorage.getItem("username"),
-                    notes: data.get("reservation_notes"),
-                    reservation_date: formatDate(reservationDate),
-                    status: "Pending",
-                    time_slot: data.get("time_slot"),
-                    coach_name: data.get("coach_name"),
-                    added_date: formatDate(new Date()),
-                  }),
-                })
+                fetch(
+                  "https://gymerls-staging-server.vercel.app/api/create-reservation",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      username: localStorage.getItem("username"),
+                      notes: data.get("reservation_notes"),
+                      reservation_date: formatDate(reservationDate),
+                      status: "Pending",
+                      time_slot: data.get("time_slot"),
+                      coach_name: data.get("coach_name"),
+                      added_date: formatDate(new Date()),
+                    }),
+                  }
+                )
                   .then((res) => res.json())
                   .then((result) => {});
 
@@ -623,21 +638,24 @@ function Reservation() {
             allowOutsideClick: false,
           }).then((result) => {
             if (result.isConfirmed) {
-              fetch("http://localhost:3031/api/create-reservation", {
-                method: "POST",
-                headers: {
-                  "Content-type": "application/json",
-                },
-                body: JSON.stringify({
-                  username: localStorage.getItem("username"),
-                  notes: data.get("reservation_notes"),
-                  reservation_date: formatDate(reservationDate),
-                  status: "Pending",
-                  time_slot: data.get("time_slot"),
-                  coach_name: data.get("coach_name"),
-                  added_date: formatDate(new Date()),
-                }),
-              })
+              fetch(
+                "https://gymerls-staging-server.vercel.app/api/create-reservation",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    username: localStorage.getItem("username"),
+                    notes: data.get("reservation_notes"),
+                    reservation_date: formatDate(reservationDate),
+                    status: "Pending",
+                    time_slot: data.get("time_slot"),
+                    coach_name: data.get("coach_name"),
+                    added_date: formatDate(new Date()),
+                  }),
+                }
+              )
                 .then((res) => res.json())
                 .then((result) => {});
 
@@ -681,21 +699,24 @@ function Reservation() {
           allowOutsideClick: false,
         }).then((result) => {
           if (result.isConfirmed) {
-            fetch("http://localhost:3031/api/create-reservation", {
-              method: "POST",
-              headers: {
-                "Content-type": "application/json",
-              },
-              body: JSON.stringify({
-                username: localStorage.getItem("username"),
-                notes: data.get("reservation_notes"),
-                reservation_date: formatDate(reservationDate),
-                status: "Pending",
-                time_slot: data.get("time_slot"),
-                coach_name: data.get("coach_name"),
-                added_date: formatDate(new Date()),
-              }),
-            })
+            fetch(
+              "https://gymerls-staging-server.vercel.app/api/create-reservation",
+              {
+                method: "POST",
+                headers: {
+                  "Content-type": "application/json",
+                },
+                body: JSON.stringify({
+                  username: localStorage.getItem("username"),
+                  notes: data.get("reservation_notes"),
+                  reservation_date: formatDate(reservationDate),
+                  status: "Pending",
+                  time_slot: data.get("time_slot"),
+                  coach_name: data.get("coach_name"),
+                  added_date: formatDate(new Date()),
+                }),
+              }
+            )
               .then((res) => res.json())
               .then((result) => {});
 
@@ -859,21 +880,24 @@ function Reservation() {
               allowOutsideClick: false,
             }).then((result) => {
               if (result.isConfirmed) {
-                fetch("http://localhost:3031/api/update-reservation", {
-                  method: "PATCH",
-                  headers: {
-                    "Content-type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    reservation_date: formatDate(updateResDate),
-                    notes: updateResNotes,
-                    time_slot: updateSelectedTimeSlot,
-                    coach_name: updateCoachName,
-                    status: updateResStatus,
-                    username: updateUsername,
-                    id: currentUserId,
-                  }),
-                })
+                fetch(
+                  "https://gymerls-staging-server.vercel.app/api/update-reservation",
+                  {
+                    method: "PATCH",
+                    headers: {
+                      "Content-type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      reservation_date: formatDate(updateResDate),
+                      notes: updateResNotes,
+                      time_slot: updateSelectedTimeSlot,
+                      coach_name: updateCoachName,
+                      status: updateResStatus,
+                      username: updateUsername,
+                      id: currentUserId,
+                    }),
+                  }
+                )
                   .then((res) => res.json())
                   .then((result) => {
                     userLog(
@@ -919,21 +943,24 @@ function Reservation() {
             allowOutsideClick: false,
           }).then((result) => {
             if (result.isConfirmed) {
-              fetch("http://localhost:3031/api/update-reservation", {
-                method: "PATCH",
-                headers: {
-                  "Content-type": "application/json",
-                },
-                body: JSON.stringify({
-                  reservation_date: formatDate(updateResDate),
-                  notes: updateResNotes,
-                  time_slot: updateSelectedTimeSlot,
-                  coach_name: updateCoachName,
-                  status: updateResStatus,
-                  username: updateUsername,
-                  id: currentUserId,
-                }),
-              })
+              fetch(
+                "https://gymerls-staging-server.vercel.app/api/update-reservation",
+                {
+                  method: "PATCH",
+                  headers: {
+                    "Content-type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    reservation_date: formatDate(updateResDate),
+                    notes: updateResNotes,
+                    time_slot: updateSelectedTimeSlot,
+                    coach_name: updateCoachName,
+                    status: updateResStatus,
+                    username: updateUsername,
+                    id: currentUserId,
+                  }),
+                }
+              )
                 .then((res) => res.json())
                 .then((result) => {
                   userLog(
@@ -979,21 +1006,24 @@ function Reservation() {
           allowOutsideClick: false,
         }).then((result) => {
           if (result.isConfirmed) {
-            fetch("http://localhost:3031/api/update-reservation", {
-              method: "PATCH",
-              headers: {
-                "Content-type": "application/json",
-              },
-              body: JSON.stringify({
-                reservation_date: formatDate(updateResDate),
-                notes: updateResNotes,
-                time_slot: updateSelectedTimeSlot,
-                coach_name: updateCoachName,
-                status: updateResStatus,
-                username: updateUsername,
-                id: currentUserId,
-              }),
-            })
+            fetch(
+              "https://gymerls-staging-server.vercel.app/api/update-reservation",
+              {
+                method: "PATCH",
+                headers: {
+                  "Content-type": "application/json",
+                },
+                body: JSON.stringify({
+                  reservation_date: formatDate(updateResDate),
+                  notes: updateResNotes,
+                  time_slot: updateSelectedTimeSlot,
+                  coach_name: updateCoachName,
+                  status: updateResStatus,
+                  username: updateUsername,
+                  id: currentUserId,
+                }),
+              }
+            )
               .then((res) => res.json())
               .then((result) => {
                 userLog(
@@ -1059,7 +1089,7 @@ function Reservation() {
 
   const userLog = (author, action, event, user, status) => {
     getIpAddress(function (callback) {
-      fetch("http://localhost:3031/api/insert-log", {
+      fetch("https://gymerls-staging-server.vercel.app/api/insert-log", {
         method: "POST",
         headers: {
           "Content-type": "application/json",

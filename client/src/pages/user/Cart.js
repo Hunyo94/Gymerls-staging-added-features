@@ -45,7 +45,7 @@ function Cart() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:3031/api/get-cart-by-id", {
+    fetch("https://gymerls-staging-server.vercel.app/api/get-cart-by-id", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -72,15 +72,18 @@ function Cart() {
         setGrandTotal(t);
       });
 
-    fetch("http://localhost:3031/api/get-user-by-username", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        username: localStorage.getItem("username"),
-      }),
-    })
+    fetch(
+      "https://gymerls-staging-server.vercel.app/api/get-user-by-username",
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          username: localStorage.getItem("username"),
+        }),
+      }
+    )
       .then((res) => res.json())
       .then((result) => {
         setFullname(result[0].name);
@@ -173,7 +176,7 @@ function Cart() {
   };
 
   const deleteCartItem = (id) => {
-    fetch("http://localhost:3031/api/delete-cart", {
+    fetch("https://gymerls-staging-server.vercel.app/api/delete-cart", {
       method: "PATCH",
       headers: {
         "Content-type": "application/json",
@@ -190,7 +193,7 @@ function Cart() {
   };
 
   const deleteCartItemAfterCheckout = (id) => {
-    fetch("http://localhost:3031/api/delete-cart", {
+    fetch("https://gymerls-staging-server.vercel.app/api/delete-cart", {
       method: "PATCH",
       headers: {
         "Content-type": "application/json",
@@ -243,7 +246,7 @@ function Cart() {
 
         const transactionDate = formatDate(new Date());
 
-        fetch("http://localhost:3031/api/transaction", {
+        fetch("https://gymerls-staging-server.vercel.app/api/transaction", {
           method: "POST",
           headers: {
             "Content-type": "application/json",
@@ -288,7 +291,7 @@ function Cart() {
 
   const userLog = (author, action, event) => {
     getIpAddress(function (callback) {
-      fetch("http://localhost:3031/api/insert-log", {
+      fetch("https://gymerls-staging-server.vercel.app/api/insert-log", {
         method: "POST",
         headers: {
           "Content-type": "application/json",

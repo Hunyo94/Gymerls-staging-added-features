@@ -128,15 +128,18 @@ export default function MiniDrawer() {
 
   const [currentUserMembership, setCurrentUserMembership] = useState("");
   const getCurrentUserInfo = (user) => {
-    fetch("http://localhost:3031/api/get-user-by-username", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        username: user,
-      }),
-    })
+    fetch(
+      "https://gymerls-staging-server.vercel.app/api/get-user-by-username",
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          username: user,
+        }),
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         setCurrentUserMembership(data[0].membership_type);
@@ -152,7 +155,7 @@ export default function MiniDrawer() {
 
   const userLog = (username, event) => {
     getIpAddress(function (callback) {
-      fetch("http://localhost:3031/api/insert-log", {
+      fetch("https://gymerls-staging-server.vercel.app/api/insert-log", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
