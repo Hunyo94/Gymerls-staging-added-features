@@ -119,7 +119,7 @@ export default function MiniDrawer() {
     setOpen(false);
   };
 
-  useEffect(() => {
+  useEffect(  () => {
     const role = localStorage.getItem("role");
     validateRole(role);
   });
