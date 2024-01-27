@@ -21,9 +21,9 @@ app.use(express.json());
 // STAGING ENV
 var db = mysql.createPool({
   connectionLimit: 10,
-  host: "bhpkgks7swlwl1zrnvta-mysql.services.clever-cloud.coms",
+  host: "bhpkgks7swlwl1zrnvta-mysql.services.clever-cloud.com",
   user: "uo06jrqvwzwursra",
-  password: "uo06jrqvwzwursra",
+  password: "27tP2Lu9tKKpJqIBzWC7",
   database: "bhpkgks7swlwl1zrnvta",
 });
 
