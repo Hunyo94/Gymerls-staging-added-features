@@ -338,10 +338,10 @@ function Landing() {
                     <Box sx={{ width: "100%" }}>
                       <BorderLinearProgress
                         variant="determinate"
-                        value={firstBatch.length * 10}
+                        value={firstBatch.length * 33}
                       />
                       <Typography sx={{ color: "gray", fontSize: 12 }}>
-                        {10 - firstBatch.length + " slot(s) remaining"}
+                        {3 - firstBatch.length + " slot(s) remaining"}
                       </Typography>
                     </Box>
                   </Grid>
@@ -351,10 +351,10 @@ function Landing() {
                     <Box sx={{ width: "100%" }}>
                       <BorderLinearProgress
                         variant="determinate"
-                        value={secondBatch.length * 10}
+                        value={secondBatch.length * 33}
                       />
                       <Typography sx={{ color: "gray", fontSize: 12 }}>
-                        {10 - secondBatch.length + " slot(s) remaining"}
+                        {3 - secondBatch.length + " slot(s) remaining"}
                       </Typography>
                     </Box>
                   </Grid>
@@ -364,10 +364,10 @@ function Landing() {
                     <Box sx={{ width: "100%" }}>
                       <BorderLinearProgress
                         variant="determinate"
-                        value={thirdBatch.length * 10}
+                        value={thirdBatch.length * 33}
                       />
                       <Typography sx={{ color: "gray", fontSize: 12 }}>
-                        {10 - thirdBatch.length + " slot(s) remaining"}
+                        {3 - thirdBatch.length + " slot(s) remaining"}
                       </Typography>
                     </Box>
                   </Grid>
@@ -377,10 +377,10 @@ function Landing() {
                     <Box sx={{ width: "100%" }}>
                       <BorderLinearProgress
                         variant="determinate"
-                        value={fourthBatch.length * 10}
+                        value={fourthBatch.length * 33}
                       />
                       <Typography sx={{ color: "gray", fontSize: 12 }}>
-                        {10 - fourthBatch.length + " slot(s) remaining"}
+                        {3 - fourthBatch.length + " slot(s) remaining"}
                       </Typography>
                     </Box>
                   </Grid>
@@ -390,10 +390,10 @@ function Landing() {
                     <Box sx={{ width: "100%" }}>
                       <BorderLinearProgress
                         variant="determinate"
-                        value={fifthBatch.length * 10}
+                        value={fifthBatch.length * 33}
                       />
                       <Typography sx={{ color: "gray", fontSize: 12 }}>
-                        {10 - fifthBatch.length + " slot(s) remaining"}
+                        {3 - fifthBatch.length + " slot(s) remaining"}
                       </Typography>
                     </Box>
                   </Grid>
@@ -403,10 +403,10 @@ function Landing() {
                     <Box sx={{ width: "100%" }}>
                       <BorderLinearProgress
                         variant="determinate"
-                        value={lastBatch.length * 10}
+                        value={lastBatch.length * 33}
                       />
                       <Typography sx={{ color: "gray", fontSize: 12 }}>
-                        {10 - lastBatch.length + " slot(s) remaining"}
+                        {3 - lastBatch.length + " slot(s) remaining"}
                       </Typography>
                     </Box>
                   </Grid>

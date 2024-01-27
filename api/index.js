@@ -288,7 +288,7 @@ app.post("/api/get-user-by-role", async (req, res) => {
 // CREATE USER AND USER PROFILE
 app.post("/api/create-user-profile", async (req, res) => {
   const sql =
-    "INSERT INTO user_profile (`username`,`birthdate`,`age`,`height`,`weight`,`gender`,`contact`,`address`,`medical_conditions`,`allergies`,`current_medication`,`family_doctor`,`doctor_contact`,`parent_name`,`parent_contact`,`parent_address`,`membership_type`,`mem_start_date`,`mem_end_date`,`added_by`) VALUES (?)";
+    "INSERT INTO user_profile (`username`,`birthdate`,`age`,`height`,`weight`,`gender`,`contact`,`address`,`medical_conditions`,`allergies`,`current_medication`,`family_doctor`,`doctor_contact`,`parent_name`,`parent_contact`,`parent_address`,`membership_type`,`price`,`mem_start_date`,`mem_end_date`,`added_by`) VALUES (?)";
   const values = [
     req.body.username,
     req.body.birthdate,
@@ -307,6 +307,7 @@ app.post("/api/create-user-profile", async (req, res) => {
     req.body.parent_contact,
     req.body.parent_address,
     req.body.membership_type,
+    req.body.price,
     req.body.mem_start_date,
     req.body.mem_end_date,
     req.body.added_by,
@@ -341,6 +342,7 @@ app.patch("/api/update-user", async (req, res) => {
   up.parent_contact = "${req.body.parent_contact}", 
   up.parent_address = "${req.body.parent_address}", 
   up.membership_type = "${req.body.membership_type}", 
+  up.price = "${req.body.price}", 
   up.mem_start_date = "${req.body.mem_start_date}", 
   up.mem_end_date = "${req.body.mem_end_date}"
   WHERE u.username = "${req.body.username}"`;
@@ -480,6 +482,19 @@ app.post("/api/create-product", async (req, res) => {
   ];
 
   db.query(sql, [values], (err, data) => {
+    if (err) {
+      console.log(err.message);
+      return res.json(err.message);
+    }
+    return res.json(data);
+  });
+});
+
+//DELETE PRODUCT
+app.patch("/api/delete-product", async (req, res) => {
+  const sql = `DELETE FROM products WHERE id = "${req.body.id}"`;
+
+  db.query(sql, (err, data) => {
     if (err) {
       console.log(err.message);
       return res.json(err.message);
@@ -1063,6 +1078,105 @@ app.post("/api/get-ready-meal-by-bmi", (req, res) => {
   const bmi = req.body.bmi;
   const sql = "SELECT * FROM ready_meals WHERE (status = 1 AND bmi = ?)";
   db.query(sql, bmi, (err, data) => {
+    if (err) {
+      return res.json("Error");
+    }
+    return res.json(data);
+  });
+});
+
+// CREATE MEMBERSHIP
+app.post("/api/create-membership", async (req, res) => {
+  const sql =
+    "INSERT INTO membership (`name`,`description`,`price`,`status`,`created_by`) VALUES (?)";
+  const values = [
+    req.body.name,
+    req.body.description,
+    req.body.price,
+    req.body.status,
+    req.body.created_by,
+  ];
+
+  db.query(sql, [values], (err, data) => {
+    if (err) {
+      console.log(err.message);
+      return res.json("Error");
+    }
+    return res.json(data);
+  });
+});
+
+// GET ALL MEMBERSHIP
+app.get("/api/get-membership", (req, res) => {
+  const sql = `SELECT * FROM membership`;
+  db.query(sql, (err, data) => {
+    if (err) {
+      return res.json("Error");
+    }
+    return res.json(data);
+  });
+});
+
+// UPDATE MEMBERSHIP STATUS
+app.patch("/api/update-membership-status", async (req, res) => {
+  const sql = `UPDATE membership SET 
+  status = "${req.body.status}"
+  WHERE id = "${req.body.id}"`;
+
+  db.query(sql, (err, data) => {
+    if (err) {
+      console.log(err.message);
+      return res.json(err.message);
+    }
+    return res.json(data);
+  });
+});
+
+// UPDATE MEMBERSHIP
+app.patch("/api/update-membership", async (req, res) => {
+  const sql = `UPDATE membership SET 
+  name = "${req.body.name}",
+  description = "${req.body.description}",
+  price = "${req.body.price}"
+  WHERE id = "${req.body.id}"`;
+
+  db.query(sql, (err, data) => {
+    if (err) {
+      console.log(err.message);
+      return res.json(err.message);
+    }
+    return res.json(data);
+  });
+});
+
+// GET MEMBERSHIP BY ID
+app.post("/api/get-membership-by-id", (req, res) => {
+  // const sql = `SELECT * FROM ready_meals`;
+  const sql = "SELECT * FROM membership WHERE id = ?";
+  db.query(sql, req.body.id, (err, data) => {
+    if (err) {
+      return res.json("Error");
+    }
+    return res.json(data);
+  });
+});
+
+// DELETE MEMBERSHIP
+app.patch("/api/delete-membership", async (req, res) => {
+  const sql = `DELETE FROM membership WHERE id = "${req.body.id}"`;
+
+  db.query(sql, (err, data) => {
+    if (err) {
+      console.log(err.message);
+      return res.json(err.message);
+    }
+    return res.json(data);
+  });
+});
+
+app.post("/api/all-user-profile", (req, res) => {
+  const sql = `SELECT * FROM user_profile`;
+  db.query(sql, (err, data) => {
     if (err) {
       return res.json("Error");
     }

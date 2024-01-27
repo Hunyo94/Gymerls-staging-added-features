@@ -16,6 +16,7 @@ import UserLog from "./pages/UserLogsLanding";
 import Database from "./pages/DatabaseLanding";
 import ChangePass from "./pages/ChangePassLanding";
 import MealplansAuto from "./pages/MealplanAutoLanding";
+import Membership from "./pages/MembershipLanding";
 
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminListOfUser from "./pages/admin/ListOfUser";
@@ -53,6 +54,7 @@ function App() {
         <Route path="/mealplan-auto" element={<MealplansAuto />} />
         <Route path="/database" element={<Database />} />
         <Route path="/change-password" element={<ChangePass />} />
+        <Route path="/membership" element={<Membership />} />
 
         {/* admin routes */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />

@@ -37,7 +37,7 @@ import CampaignIcon from "@mui/icons-material/Campaign";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import VpnKeyIcon from "@mui/icons-material/VpnKey";
 import Swal from "sweetalert2";
-import Order from "./Order";
+import Membership from "./Membership";
 
 const drawerWidth = 240;
 
@@ -172,7 +172,7 @@ export default function MiniDrawer() {
     });
   };
 
-  const [openSettings, setOpenSettings] = useState(false);
+  const [openSettings, setOpenSettings] = useState(true);
   const handleClickOpenSettings = () => {
     setOpenSettings(!openSettings);
   };
@@ -302,6 +302,10 @@ export default function MiniDrawer() {
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
               }}
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.href = "/orders";
+              }}
             >
               <ListItemIcon
                 sx={{
@@ -315,7 +319,7 @@ export default function MiniDrawer() {
                 </Tooltip>
               </ListItemIcon>
               <ListItemText sx={{ opacity: open ? 1 : 0 }}>
-                <Typography sx={{ fontWeight: "bold" }}>Orders</Typography>
+                <Typography>Orders</Typography>
               </ListItemText>
             </ListItemButton>
           </ListItem>
@@ -391,7 +395,9 @@ export default function MiniDrawer() {
                       <CampaignIcon />
                     </Tooltip>
                   </ListItemIcon>
-                  <ListItemText primary="Announcements" />
+                  <ListItemText>
+                    <ListItemText primary="Announcements " />
+                  </ListItemText>
                 </ListItemButton>
               </List>
               <List component="div" disablePadding>
@@ -423,7 +429,9 @@ export default function MiniDrawer() {
                       <CardMembershipIcon />
                     </Tooltip>
                   </ListItemIcon>
-                  <ListItemText primary="Membership" />
+                  <Typography sx={{ fontWeight: "bold" }}>
+                    Membership
+                  </Typography>
                 </ListItemButton>
               </List>
               <List component="div" disablePadding>
@@ -487,8 +495,7 @@ export default function MiniDrawer() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        {/* <Landing /> */}
-        <Order />
+        <Membership />
       </Box>
     </Box>
   );

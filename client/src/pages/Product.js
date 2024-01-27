@@ -183,7 +183,6 @@ function Product() {
             "new product",
             product_name
           );
-
           Swal.fire({
             title: "Product successfully created!",
             icon: "success",
@@ -339,6 +338,50 @@ function Product() {
     doc.text("List of products", 20, 10);
     doc.autoTable({ html: "#productTable" });
     doc.save("products.pdf");
+  };
+
+  //DELETE PRODUCT
+  const handleDeleteProduct = (id, productName) => {
+    Swal.fire({
+      icon: "warning",
+      title: "Are you sure you want to delete this product?",
+      text: "You won't be able to revert this!",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+      allowOutsideClick: false,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        userLog(
+          localStorage.getItem("username"),
+          "Delete",
+          "subscription",
+          productName
+        );
+
+        // DELETE IN PRODUCT
+        fetch("http://localhost:3031/api/delete-product", {
+          method: "PATCH",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            id: id,
+          }),
+        }).then((res) => res.json());
+
+        Swal.fire({
+          title: "Product successfully deleted!",
+          icon: "success",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(function () {
+          window.location.reload(false);
+        });
+      } else {
+        setIsBtnLoading(false);
+      }
+    });
   };
 
   return (
@@ -635,6 +678,19 @@ function Product() {
                                 onClick={() => handleOpenUpdateProduct(prod.id)}
                               >
                                 Update
+                              </Button>
+                              <Button
+                                variant="text"
+                                color="warning"
+                                sx={{ marginRight: ".5rem" }}
+                                onClick={() =>
+                                  handleDeleteProduct(
+                                    prod.id,
+                                    prod.product_name
+                                  )
+                                }
+                              >
+                                Delete{" "}
                               </Button>
                             </TableCell>
                           </StyledTableRow>

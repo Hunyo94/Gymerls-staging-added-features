@@ -59,6 +59,7 @@ function MealplantAuto() {
   const [bmiClass, setBmiClass] = useState("");
 
   // READY MEAL DATA
+  const [newDietType, setNewDietType] = useState("");
 
   const [filteredClass, setFilteredClass] = useState("ALL");
   const [updateMealOpen, setUpdateMealOpen] = useState(false);
@@ -328,19 +329,17 @@ function MealplantAuto() {
     }
   };
 
-  const validateUpdateDietType = (dietType) => {
+  const validateUpdateDietType = (diettype) => {
     setDietTypeIsValid(true);
-    setCreateReadyMealButtonIsDisabled(true);
     setIsVisible(true);
-
-    if (dietType.length >= 5) {
+    if (diettype.length >= 5) {
       fetch("http://localhost:3031/api/validate-diet-type", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
         },
         body: JSON.stringify({
-          diet_type: dietType,
+          diet_type: diettype,
         }),
       })
         .then((res) => res.json())
@@ -350,11 +349,21 @@ function MealplantAuto() {
             setCreateReadyMealButtonIsDisabled(false);
             setIsVisible(false);
           } else {
-            setDietTypeIsValid(false);
-            setCreateReadyMealButtonIsDisabled(true);
-            setIsVisible(false);
+            if (dietType == diettype) {
+              setDietTypeIsValid(true);
+              setCreateReadyMealButtonIsDisabled(false);
+              setIsVisible(false);
+            } else {
+              setDietTypeIsValid(false);
+              setCreateReadyMealButtonIsDisabled(true);
+              setIsVisible(false);
+            }
           }
         });
+    } else {
+      setDietTypeIsValid(false);
+      setCreateReadyMealButtonIsDisabled(true);
+      setIsVisible(false);
     }
   };
 
@@ -447,6 +456,7 @@ function MealplantAuto() {
         for (let meal of result) {
           setBmiClass(meal.bmi);
           setDietType(meal.diet_type);
+          setNewDietType(meal.diet_type);
           setDescriptions(meal.descriptions);
           setSundayReadyBreakfast(meal.ready_sunday_breakfast);
           setSundayReadyLunch(meal.ready_sunday_lunch);
@@ -1442,7 +1452,7 @@ function MealplantAuto() {
                         value={dietType}
                         onChange={(e) => {
                           validateUpdateDietType(e.target.value);
-                          setDietType(e.target.value);
+                          setNewDietType(e.target.value);
                         }}
                         helperText="Please fill up diet type"
                       />

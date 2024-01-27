@@ -17,6 +17,7 @@ export default function TemporaryDrawer() {
   const [birthdate, setBirthdate] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [price, setPrice] = useState(0);
 
   const formatDate = (date) => {
     var dateToFormat = new Date(date);
@@ -40,6 +41,8 @@ export default function TemporaryDrawer() {
     })
       .then((res) => res.json())
       .then((result) => {
+        setUserProfile(result);
+        setPrice(result[0].price);
         const formattedBirthdate = formatDate(result[0].birthdate);
         const formattedStartDate = formatDate(result[0].mem_start_date);
         const formattedEndDate = formatDate(result[0].mem_end_date);
@@ -49,6 +52,10 @@ export default function TemporaryDrawer() {
       });
   }, []);
 
+  const pesoFormat = new Intl.NumberFormat("fil-PH", {
+    style: "currency",
+    currency: "PHP",
+  }).format(price);
   const [state, setState] = React.useState({
     top: false,
   });
@@ -250,14 +257,25 @@ export default function TemporaryDrawer() {
                 Membership
               </Typography>
             </Stack>
-            <Stack marginTop={1}>
-              <Typography variant="h6">Type</Typography>
-              {/* <Typography color="#616161">{user.membership_type}</Typography> */}
-              <Input
-                disabled
-                defaultValue={user.membership_type}
-                inputProps={ariaLabel}
-              />
+            <Stack marginTop={1} sx={{ flexDirection: "row" }}>
+              <Stack>
+                <Typography variant="h6">Type</Typography>
+                {/* <Typography color="#616161">{user.membership_type}</Typography> */}
+                <Input
+                  disabled
+                  defaultValue={user.membership_type}
+                  inputProps={ariaLabel}
+                />
+              </Stack>
+              <Stack>
+                <Typography variant="h6">Price</Typography>
+                {/* <Typography color="#616161">{user.membership_type}</Typography> */}
+                <Input
+                  disabled
+                  defaultValue={pesoFormat}
+                  inputProps={ariaLabel}
+                />
+              </Stack>
             </Stack>
             <Stack>
               <Typography variant="h6">Start date</Typography>

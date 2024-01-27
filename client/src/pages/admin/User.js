@@ -94,6 +94,10 @@ function User() {
   const [recommendedMeals, setRecommendedMeals] = useState([]);
   const [classsificationColor, setClasssificationColor] = useState("");
 
+  const [membership, setMembershipData] = useState();
+  const [membershipPrice, setMembershipPrice] = useState([]);
+  const [price, setPrice] = useState(0);
+
   // MEAL DATA
   const [sundayBreakfast, setSundayBreakfast] = useState("");
   const [sundayLunch, setSundayLunch] = useState("");
@@ -151,17 +155,6 @@ function User() {
   const [saturdayReadyBreakfast, setSaturdayReadyBreakfast] = useState("");
   const [saturdayReadyLunch, setSaturdayReadyLunch] = useState("");
   const [saturdayReadyDinner, setSaturdayReadyDinner] = useState("");
-
-  const membership = [
-    {
-      name: "premium",
-      value: "Premium",
-    },
-    {
-      name: "monthly",
-      value: "Monthly",
-    },
-  ];
 
   const dietType = [
     {
@@ -233,68 +226,6 @@ function User() {
 
   const createUser = (e) => {
     e.preventDefault();
-    //  if (height != 0 && weight != 0) {
-    //     Swal.fire({
-    //       icon: "info",
-    //       title: "Are you sure you want to create new account?",
-    //       text: "You won't be able to revert this!",
-    //       showCancelButton: true,
-    //       confirmButtonText: "Yes",
-    //       cancelButtonText: "No",
-    //       allowOutsideClick: false,
-    //     }).then((result) => {
-    //       if (result.isConfirmed) {
-    //         fetch("http://localhost:3031/api/register", {
-    //           method: "POST",
-    //           headers: {
-    //             "Content-type": "application/json",
-    //           },
-    //           body: JSON.stringify({
-    //             name: fullname,
-    //             username: username,
-    //             role: selectedRole,
-    //             isActive: 1,
-    //             password: (Math.random() + 1).toString(36).substring(4),
-    //           }),
-    //         })
-    //           .then((res) => res.json())
-    //           .then((result) => {
-    //             createUserProfile();
-    //             userLog(
-    //               localStorage.getItem("username"),
-    //               "Create",
-    //               "new user",
-    //               username
-    //             );
-    //             Swal.fire({
-    //               title: "User successfully created!",
-    //               icon: "success",
-    //               showConfirmButton: false,
-    //               timer: 1500,
-    //             }).then(function () {
-    //               setIsBtnLoading(false);
-    //               setOpen(false);
-    //               setIsLoading(true);
-    //               window.location.reload(false);
-    //               setAge(0);
-    //               setHeight(0);
-    //               setWeight(0);
-    //             });
-    //           });
-    //       } else {
-    //         setIsBtnLoading(false);
-    //       }
-    //     });
-    //   } else {
-    //     Swal.fire({
-    //       icon: "info",
-    //       title: "Please fill up all fields!",
-    //       showCancelButton: false,
-    //       confirmButtonText: "OK",
-    //       cancelButtonText: "No",
-    //       allowOutsideClick: false,
-    //     });
-    //   }
     if (height != 0 && weight != 0) {
       Swal.fire({
         icon: "info",
@@ -425,6 +356,7 @@ function User() {
         parent_contact: parentContact,
         parent_address: parentAddress,
         membership_type: membershipType,
+        price: price,
         mem_start_date: formattedStartDate,
         mem_end_date: formattedEndDate,
         added_by: localStorage.getItem("username"),
@@ -435,6 +367,7 @@ function User() {
   };
 
   useEffect(() => {
+    handleSubscription();
     const timer = setTimeout(() => {
       fetch("http://localhost:3031/api/get-user-by-role", {
         method: "POST",
@@ -459,6 +392,32 @@ function User() {
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  const handlePriceMembership = (e) => {
+    for (let item of membership)
+      if (item.name == e) {
+        const pesoFormat = new Intl.NumberFormat("fil-PH", {
+          style: "currency",
+          currency: "PHP",
+        }).format(item.price);
+        setPrice(item.price);
+        setMembershipPrice(pesoFormat);
+      }
+  };
+
+  const handleSubscription = () => {
+    fetch("http://localhost:3031/api/get-membership")
+      .then((response) => response.json())
+      .then((data) => {
+        let memData = [];
+        for (let item of data) {
+          if (item.status == 1) {
+            memData.push(item);
+          }
+        }
+        setMembershipData(memData);
+      });
+  };
 
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     "&:nth-of-type(odd)": {
@@ -485,6 +444,12 @@ function User() {
       .then((result) => {
         setHeight(result[0].height);
         setWeight(result[0].weight);
+
+        const pesoFormat = new Intl.NumberFormat("fil-PH", {
+          style: "currency",
+          currency: "PHP",
+        }).format(result[0].price);
+
         const bdate = formatDate(result[0].birthdate);
         const startDate = formatDate(result[0].mem_start_date);
         const endDate = formatDate(result[0].mem_end_date);
@@ -509,6 +474,7 @@ function User() {
         setParentAddress(result[0].parent_address);
 
         setMembershipType(result[0].membership_type);
+        setMembershipPrice(pesoFormat);
         setUpdateStartDate(startDate);
         setUpdateEndDate(endDate);
 
@@ -555,6 +521,7 @@ function User() {
             parent_contact: parentContact,
             parent_address: parentAddress,
             membership_type: membershipType,
+            price: price,
             mem_start_date: startDateFormatted,
             mem_end_date: endDateFormatted,
             username: username,
@@ -790,75 +757,6 @@ function User() {
       });
   };
 
-  // const updateMealPlan = (event) => {
-  //   event.preventDefault();
-  //   setIsBtnLoading(true);
-  //   const data = new FormData(event.currentTarget);
-  //   Swal.fire({
-  //     icon: "info",
-  //     title: "Are you sure you want to update this account?",
-  //     text: "You won't be able to revert this!",
-  //     showCancelButton: true,
-  //     confirmButtonText: "Yes",
-  //     cancelButtonText: "No",
-  //     allowOutsideClick: false,
-  //   }).then((result) => {
-  //     if (result.isConfirmed) {
-  //       fetch("http://localhost:3031/api/update-meal-planning", {
-  //         method: "PATCH",
-  //         headers: {
-  //           "Content-type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //           diet_type: data.get("diet_type"),
-  //           calories: data.get("total_calories"),
-  //           sun_bf_meal: data.get("sunday_breakfast"),
-  //           sun_lunch_meal: data.get("sunday_lunch"),
-  //           sun_dinner_meal: data.get("sunday_dinner"),
-  //           mon_bf_meal: data.get("monday_breakfast"),
-  //           mon_lunch_meal: data.get("monday_lunch"),
-  //           mon_dinner_meal: data.get("monday_dinner"),
-  //           tue_bf_meal: data.get("tuesday_breakfast"),
-  //           tue_lunch_meal: data.get("tuesday_lunch"),
-  //           tue_dinner_meal: data.get("tuesday_dinner"),
-  //           wed_bf_meal: data.get("wednesday_breakfast"),
-  //           wed_lunch_meal: data.get("wednesday_lunch"),
-  //           wed_dinner_meal: data.get("wednesday_dinner"),
-  //           thurs_bf_meal: data.get("thursday_breakfast"),
-  //           thurs_lunch_meal: data.get("thursday_lunch"),
-  //           thurs_dinner_meal: data.get("thursday_dinner"),
-  //           fri_bf_meal: data.get("friday_breakfast"),
-  //           fri_lunch_meal: data.get("friday_lunch"),
-  //           fri_dinner_meal: data.get("friday_dinner"),
-  //           sat_bf_meal: data.get("saturday_breakfast"),
-  //           sat_lunch_meal: data.get("saturday_lunch"),
-  //           sat_dinner_meal: data.get("saturday_dinner"),
-  //           username: mealPlanUser,
-  //         }),
-  //       })
-  //         .then((res) => res.json())
-  //         .then((result) => {
-  //           userLog(
-  //             localStorage.getItem("username"),
-  //             "Update",
-  //             "meal plan for",
-  //             mealPlanUser
-  //           );
-  //           Swal.fire({
-  //             title: "Meal plan successfully updated!",
-  //             icon: "success",
-  //             showConfirmButton: false,
-  //             timer: 1500,
-  //           }).then(function () {
-  //             setOpenModalMealPlanning(false);
-  //             setIsBtnLoading(false);
-  //             window.location.reload(false);
-  //           });
-  //         });
-  //     } else {
-  //     }
-  //   });
-  // };
   const updateMealPlan = (event) => {
     event.preventDefault();
     setIsBtnLoading(true);
@@ -1575,26 +1473,48 @@ function User() {
               <Typography sx={{ marginTop: "1rem" }} variant="h6">
                 Membership
               </Typography>
-              <TextField
-                id="standard-select-membership"
-                select
-                fullWidth
-                margin="normal"
-                label="Membership"
-                value={membershipType}
-                sx={{ marginBottom: "1rem" }}
-                onChange={(e) => {
-                  setMembershipType(e.target.value);
-                }}
-                defaultValue={"Monthly"}
-                helperText="Please select membership"
-              >
-                {membership.map((option) => (
-                  <MenuItem key={option.name} value={option.value}>
-                    {option.value}
-                  </MenuItem>
-                ))}
-              </TextField>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    id="standard-select-membership"
+                    select
+                    margin="normal"
+                    label="Membership"
+                    value={membershipType}
+                    sx={{ marginBottom: "1rem" }}
+                    onChange={(e) => {
+                      handlePriceMembership(e.target.value);
+                      setMembershipType(e.target.value);
+                    }}
+                    defaultValue={"Monthly"}
+                    helperText="Please select membership"
+                  >
+                    {membership.map((option) => (
+                      <MenuItem key={option.id} value={option.name}>
+                        {option.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    id="standard-select-membership"
+                    inputProps={{
+                      readOnly: "true",
+                    }}
+                    margin="normal"
+                    label="Price"
+                    value={membershipPrice}
+                    sx={{ marginBottom: "1rem" }}
+                    onChange={(e) => {
+                      setMembershipPrice(e.target.value);
+                    }}
+                    defaultValue={"Monthly"}
+                  ></TextField>
+                </Grid>
+              </Grid>
               <Grid container spacing={2}>
                 <Grid item xs={6}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -1936,25 +1856,48 @@ function User() {
                 <Typography sx={{ marginTop: "1rem" }} variant="h6">
                   Membership
                 </Typography>
-                <TextField
-                  id="standard-select-membership"
-                  select
-                  fullWidth
-                  margin="normal"
-                  label="Membership"
-                  value={membershipType}
-                  sx={{ marginBottom: "1rem" }}
-                  onChange={(e) => {
-                    setMembershipType(e.target.value);
-                  }}
-                  helperText="Please select membership"
-                >
-                  {membership.map((option) => (
-                    <MenuItem key={option.name} value={option.value}>
-                      {option.value}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-select-membership"
+                      select
+                      margin="normal"
+                      label="Membership"
+                      value={membershipType}
+                      sx={{ marginBottom: "1rem" }}
+                      onChange={(e) => {
+                        handlePriceMembership(e.target.value);
+                        setMembershipType(e.target.value);
+                      }}
+                      defaultValue={"Monthly"}
+                      helperText="Please select membership"
+                    >
+                      {membership.map((option) => (
+                        <MenuItem key={option.id} value={option.name}>
+                          {option.name}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-select-membership"
+                      inputProps={{
+                        readOnly: "true",
+                      }}
+                      margin="normal"
+                      label="Price"
+                      value={membershipPrice}
+                      sx={{ marginBottom: "1rem" }}
+                      onChange={(e) => {
+                        setMembershipPrice(e.target.value);
+                      }}
+                      defaultValue={"Monthly"}
+                    ></TextField>
+                  </Grid>
+                </Grid>
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>

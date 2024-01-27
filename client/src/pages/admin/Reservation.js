@@ -276,27 +276,27 @@ function Reservation() {
           }
         }
 
-        first_batch.length === 10
+        first_batch.length === 3
           ? setFirstBatchIsDisabled(true)
           : setFirstBatchIsDisabled(false);
 
-        second_batch.length === 10
+        second_batch.length === 3
           ? setSecondBatchIsDisabled(true)
           : setSecondBatchIsDisabled(false);
 
-        third_batch.length === 10
+        third_batch.length === 3
           ? setThirdBatchIsDisabled(true)
           : setThirdBatchIsDisabled(false);
 
-        fourth_batch.length === 10
+        fourth_batch.length === 3
           ? setFourthBatchIsDisabled(true)
           : setFourthBatchIsDisabled(false);
 
-        fifth_batch.length === 10
+        fifth_batch.length === 3
           ? setFifthBatchIsDisabled(true)
           : setFifthBatchIsDisabled(false);
 
-        last_batch.length === 10
+        last_batch.length === 3
           ? setLastBatchIsDisabled(true)
           : setLastBatchIsDisabled(false);
       });
@@ -450,8 +450,10 @@ function Reservation() {
       validTime = 4;
     } else if (timeNows >= 1701 && timeNows < 1900) {
       validTime = 5;
-    } else if (timeNows >= 1901 && timeNows < 2359) {
+    } else if (timeNows >= 1901 && timeNows < 2100) {
       validTime = 6;
+    } else if (timeNows < 2101) {
+      validTime = 7;
     }
     setTimeNow(validTime);
   };
@@ -740,7 +742,6 @@ function Reservation() {
   const selectedUpdateDate = updateResDate.toString();
 
   const handleMonthsUpdate = () => {
-    // console.log(selectedUpdateDate);
     setSelectedUpdateTimeSlot("");
     setUpdateSelectedTimeSlot("");
 
@@ -840,7 +841,6 @@ function Reservation() {
     } else {
       selectValidTime = 7;
     }
-    // console.log(selectValidTime);
     // YEAR VALIDAION
     if (selectMonth.slice(10, 16) >= monthNow.slice(10, 16)) {
       // MONTH VALIDATION

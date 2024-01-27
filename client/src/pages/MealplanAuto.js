@@ -19,7 +19,6 @@ import {
   Grid,
   Divider,
   Typography,
-  Radio,
   CircularProgress,
   Backdrop,
   Switch,
@@ -27,51 +26,36 @@ import {
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme, styled } from "@mui/material/styles";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import PrintIcon from "@mui/icons-material/Print";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import { ClickAwayListener } from "@mui/base/ClickAwayListener";
 
 function MealplantAuto() {
-  const relativeTime = require("dayjs/plugin/relativeTime");
   const [open, setOpen] = useState(false);
   const [openModalUpdate, setOpenModalUpdate] = useState(false);
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const modalWidth = useMediaQuery(theme.breakpoints.down("md"));
   const [isLoading, setIsLoading] = useState(true);
   const [isBtnLoading, setIsBtnLoading] = useState(false);
   const [dietTypeIsValid, setDietTypeIsValid] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
 
-  const [hasMealPlan, setHasMealPlan] = useState(true);
-
   const [bmiClass, setBmiClass] = useState("");
 
   // READY MEAL DATA
 
-  const [filteredClass, setFilteredClass] = useState("ALL");
-  const [updateMealOpen, setUpdateMealOpen] = useState(false);
+  const [newDietType, setNewDietType] = useState("");
+
   const [createReadyMealButtonIsDisabled, setCreateReadyMealButtonIsDisabled] =
     useState(false);
 
   const [updateMealModal, setUpdateMealModal] = useState(false);
   const [readyMealid, setReadyMealId] = useState(0);
-  const [updateButtonIsDisable, setUpdateButtonIsDisable] = useState(false);
 
   const [readyMeals, setReadyMeals] = useState([]);
 
-  const [dietType, setDietType] = useState();
+  const [dietType, setDietType] = useState("");
 
   const [descriptions, setDescriptions] = useState("");
 
@@ -106,47 +90,11 @@ function MealplantAuto() {
   // data table
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [tableHasNoData, setTableHasNoData] = useState(false);
   const [mealsHasnoData, setMealsHasnoData] = useState(false);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
-  const classsifications = [
-    {
-      name: "Severe Thinnes",
-      value: "Severe Thinnes",
-    },
-    {
-      name: "Moderate Thinnes",
-      value: "Moderate Thinnes",
-    },
-    {
-      name: "Mild Thinnes",
-      value: "Mild Thinnes",
-    },
-    {
-      name: "Normal",
-      value: "Normal",
-    },
-    {
-      name: "Overweight",
-      value: "Overweight",
-    },
-    {
-      name: "Obese Class I",
-      value: "Obese Class I",
-    },
-    {
-      name: "Obese Class II",
-      value: "Obese Class II",
-    },
-    {
-      name: "Obese Class III",
-      value: "Obese Class III",
-    },
-  ];
 
   //CREATE READY MEAL
   const handleReadyMealLogs = () => {
@@ -170,7 +118,6 @@ function MealplantAuto() {
       allowOutsideClick: false,
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log(dietType);
         handleCreateReadyMeal();
       }
     });
@@ -314,33 +261,42 @@ function MealplantAuto() {
         });
     }
   };
-  const validateUpdateDietType = (dietType) => {
-    setDietTypeIsValid(true);
-    setCreateReadyMealButtonIsDisabled(true);
-    setIsVisible(true);
 
-    if (dietType.length >= 5) {
+  const validateUpdateDietType = (diettype) => {
+    setDietTypeIsValid(true);
+    setIsVisible(true);
+    if (diettype.length >= 5) {
       fetch("http://localhost:3031/api/validate-diet-type", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
         },
         body: JSON.stringify({
-          diet_type: dietType,
+          diet_type: diettype,
         }),
       })
         .then((res) => res.json())
         .then((result) => {
-          if (result.length == 0) {
+          if (result.length === 0) {
             setDietTypeIsValid(true);
             setCreateReadyMealButtonIsDisabled(false);
             setIsVisible(false);
           } else {
-            setDietTypeIsValid(false);
-            setCreateReadyMealButtonIsDisabled(true);
-            setIsVisible(false);
+            if (dietType === diettype) {
+              setDietTypeIsValid(true);
+              setCreateReadyMealButtonIsDisabled(false);
+              setIsVisible(false);
+            } else {
+              setDietTypeIsValid(false);
+              setCreateReadyMealButtonIsDisabled(true);
+              setIsVisible(false);
+            }
           }
         });
+    } else {
+      setDietTypeIsValid(false);
+      setCreateReadyMealButtonIsDisabled(true);
+      setIsVisible(false);
     }
   };
 
@@ -359,10 +315,8 @@ function MealplantAuto() {
         .then((response) => response.json())
         .then((data) => {
           if (data === 0) {
-            setTableHasNoData(false);
           } else {
             setIsLoading(false);
-            setTableHasNoData(true);
           }
         });
     }, 1000);
@@ -374,6 +328,7 @@ function MealplantAuto() {
     fetch("http://localhost:3031/api/get-ready-meals")
       .then((response) => response.json())
       .then((data) => {
+        setReadyMeals(data);
         if (data.length !== 0) {
           setReadyMeals(data);
           setFilteredReadyMeals(data);
@@ -425,6 +380,7 @@ function MealplantAuto() {
         for (let meal of result) {
           setBmiClass(meal.bmi);
           setDietType(meal.diet_type);
+          setNewDietType(meal.diet_type);
           setDescriptions(meal.descriptions);
           setSundayReadyBreakfast(meal.ready_sunday_breakfast);
           setSundayReadyLunch(meal.ready_sunday_lunch);
@@ -461,7 +417,6 @@ function MealplantAuto() {
   }));
 
   const handleClickOpenModalUpdateMeal = () => {
-    setUpdateMealOpen(true);
     setUpdateMealModal(true);
     setOpenModalUpdate(true);
   };
@@ -538,7 +493,6 @@ function MealplantAuto() {
       }
     });
   };
-
   const handleCloseModalReadyMealPlanning = () => {
     setBmiClass("");
     setDietType("");
@@ -565,7 +519,7 @@ function MealplantAuto() {
     setSaturdayReadyLunch("");
     setSaturdayReadyDinner("");
     setIsVisible(true);
-    setCreateReadyMealButtonIsDisabled(true);
+    setCreateReadyMealButtonIsDisabled(false);
   };
 
   const changeReadyMealStatus = (status, diet_type) => {
@@ -600,7 +554,7 @@ function MealplantAuto() {
     })
       .then((res) => res.json())
       .then((data) => {
-        if (status == 1) {
+        if (status === 1) {
           mealPlanLog(
             localStorage.getItem("username"),
             "Change",
@@ -752,502 +706,498 @@ function MealplantAuto() {
             aria-labelledby="responsive-dialog-title"
           >
             <DialogContent>
-              {hasMealPlan ? (
-                <form onSubmit={createReadyMeals}>
-                  <DialogTitle id="responsive-dialog-title">
-                    CREATE READY MEALS
-                  </DialogTitle>
-                  <DialogContent>
-                    <DialogContentText>
-                      Fill up all fields, type <strong>n/a</strong> if not
-                      applicable.
-                    </DialogContentText>
-                    <Divider />
+              <form onSubmit={createReadyMeals}>
+                <DialogTitle id="responsive-dialog-title">
+                  CREATE READY MEALS
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    Fill up all fields, type <strong>n/a</strong> if not
+                    applicable.
+                  </DialogContentText>
+                  <Divider />
 
-                    <TextField
-                      id="standard_type_diet"
-                      name="diet_type"
-                      label="Diet type"
-                      fullWidth
-                      multiline
-                      sx={{ marginBottom: ".5rem" }}
-                      required
-                      value={dietType}
-                      onChange={(e) => {
-                        validateDietType(e.target.value);
-                        setDietType(e.target.value);
-                      }}
-                      helperText="Diet type must be 5 characters and above "
-                    />
-                    <DialogContentText sx={{ marginBottom: ".5rem" }}>
-                      {dietTypeIsValid ? (
-                        <Typography
-                          variant="caption"
-                          margin="normal"
-                          hidden={isVisible}
-                          sx={{
-                            fontSize: "0.8rem",
-                            color: "green",
-                          }}
-                        >
-                          Diet type is available
-                        </Typography>
-                      ) : (
-                        <Typography
-                          variant="caption"
-                          margin="normal"
-                          hidden={isVisible}
-                          sx={{
-                            fontSize: "0.8rem",
-                            color: "#ae1919",
-                          }}
-                        >
-                          Diet type is taken
-                        </Typography>
-                      )}
-                    </DialogContentText>
-                    <TextField
-                      id="description"
-                      name="description"
-                      label="Descriptions"
-                      fullWidth
-                      multiline
-                      value={descriptions}
-                      onChange={(e) => {
-                        setDescriptions(e.target.value);
-                      }}
-                      sx={{ marginBottom: "1rem" }}
-                      required
-                    />
+                  <TextField
+                    id="standard_type_diet"
+                    name="diet_type"
+                    label="Diet type"
+                    fullWidth
+                    multiline
+                    sx={{ marginBottom: ".5rem" }}
+                    required
+                    value={dietType}
+                    onChange={(e) => {
+                      validateDietType(e.target.value);
+                      setDietType(e.target.value);
+                    }}
+                    helperText="Diet type must be 5 characters and above "
+                  />
+                  <DialogContentText sx={{ marginBottom: ".5rem" }}>
+                    {dietTypeIsValid ? (
+                      <Typography
+                        variant="caption"
+                        margin="normal"
+                        hidden={isVisible}
+                        sx={{
+                          fontSize: "0.8rem",
+                          color: "green",
+                        }}
+                      >
+                        Diet type is available
+                      </Typography>
+                    ) : (
+                      <Typography
+                        variant="caption"
+                        margin="normal"
+                        hidden={isVisible}
+                        sx={{
+                          fontSize: "0.8rem",
+                          color: "#ae1919",
+                        }}
+                      >
+                        Diet type is taken
+                      </Typography>
+                    )}
+                  </DialogContentText>
+                  <TextField
+                    id="description"
+                    name="description"
+                    label="Descriptions"
+                    fullWidth
+                    multiline
+                    value={descriptions}
+                    onChange={(e) => {
+                      setDescriptions(e.target.value);
+                    }}
+                    sx={{ marginBottom: "1rem" }}
+                    required
+                  />
 
-                    <TextField
-                      defaultValue={"Normal 18.5 to 25"}
-                      required
-                      id="standard-class-bmi"
-                      select
-                      fullWidth
-                      name="bmi"
-                      margin="normal"
-                      value={bmiClass}
-                      label="Classifications BMI"
-                      sx={{ marginBottom: "1rem" }}
-                      onChange={(e) => {
-                        setBmiClass(e.target.value);
-                      }}
+                  <TextField
+                    defaultValue={"Normal 18.5 to 25"}
+                    required
+                    id="standard-class-bmi"
+                    select
+                    fullWidth
+                    name="bmi"
+                    margin="normal"
+                    value={bmiClass}
+                    label="Classifications BMI"
+                    sx={{ marginBottom: "1rem" }}
+                    onChange={(e) => {
+                      setBmiClass(e.target.value);
+                    }}
+                  >
+                    <MenuItem sx={{ color: "#bc2020" }} value={"<" + 16}>
+                      <Typography sx={{ color: "#bc2020" }}>
+                        {"Severe Thinnes <16"}
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem
+                      sx={{ color: "#d38888" }}
+                      value={16 + " to " + 17}
                     >
-                      <MenuItem sx={{ color: "#bc2020" }} value={"<" + 16}>
-                        <Typography sx={{ color: "#bc2020" }}>
-                          {"Severe Thinnes <16"}
-                        </Typography>
-                      </MenuItem>
-                      <MenuItem
-                        sx={{ color: "#d38888" }}
-                        value={16 + " to " + 17}
-                      >
-                        <Typography sx={{ color: "#d38888" }}>
-                          {"Moderate Thinnes 16 to 17"}
-                        </Typography>
-                      </MenuItem>
-                      <MenuItem
-                        sx={{ color: "#ffe400" }}
-                        value={17 + " to " + 18.5}
-                      >
-                        <Typography sx={{ color: "#ffe400" }}>
-                          {"Mild Thinnes 17 to 18.5 "}
-                        </Typography>
-                      </MenuItem>
-                      <MenuItem
-                        sx={{ color: "#008137" }}
-                        value={18.5 + " to " + 25}
-                      >
-                        <Typography sx={{ color: "#008137" }}>
-                          {"Normal 18.5 to 25"}
-                        </Typography>
-                      </MenuItem>
-                      <MenuItem
-                        sx={{ color: "#ffe400" }}
-                        value={25 + " to " + 30}
-                      >
-                        <Typography sx={{ color: "#ffe400" }}>
-                          {"Overweight 25 to 30"}
-                        </Typography>
-                      </MenuItem>
-                      <MenuItem
-                        sx={{ color: "#d38888" }}
-                        value={30 + " to " + 35}
-                      >
-                        <Typography sx={{ color: "#d38888" }}>
-                          {"Obese Class I 30 to 35"}
-                        </Typography>
-                      </MenuItem>
-                      <MenuItem
-                        sx={{ color: "#bc2020" }}
-                        value={35 + " to " + 40}
-                      >
-                        <Typography sx={{ color: "#bc2020" }}>
-                          {"Obese Class II 35 to 40"}
-                        </Typography>
-                      </MenuItem>
-                      <MenuItem sx={{ color: "#8a0101" }} value={">" + 40}>
-                        <Typography sx={{ color: "#8a0101" }}>
-                          {"Obese Class III >40"}
-                        </Typography>
-                      </MenuItem>
-                    </TextField>
+                      <Typography sx={{ color: "#d38888" }}>
+                        {"Moderate Thinnes 16 to 17"}
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem
+                      sx={{ color: "#ffe400" }}
+                      value={17 + " to " + 18.5}
+                    >
+                      <Typography sx={{ color: "#ffe400" }}>
+                        {"Mild Thinnes 17 to 18.5 "}
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem
+                      sx={{ color: "#008137" }}
+                      value={18.5 + " to " + 25}
+                    >
+                      <Typography sx={{ color: "#008137" }}>
+                        {"Normal 18.5 to 25"}
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem
+                      sx={{ color: "#ffe400" }}
+                      value={25 + " to " + 30}
+                    >
+                      <Typography sx={{ color: "#ffe400" }}>
+                        {"Overweight 25 to 30"}
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem
+                      sx={{ color: "#d38888" }}
+                      value={30 + " to " + 35}
+                    >
+                      <Typography sx={{ color: "#d38888" }}>
+                        {"Obese Class I 30 to 35"}
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem
+                      sx={{ color: "#bc2020" }}
+                      value={35 + " to " + 40}
+                    >
+                      <Typography sx={{ color: "#bc2020" }}>
+                        {"Obese Class II 35 to 40"}
+                      </Typography>
+                    </MenuItem>
+                    <MenuItem sx={{ color: "#8a0101" }} value={">" + 40}>
+                      <Typography sx={{ color: "#8a0101" }}>
+                        {"Obese Class III >40"}
+                      </Typography>
+                    </MenuItem>
+                  </TextField>
 
-                    <Divider />
-                    <Typography variant="h6">SUNDAY</Typography>
+                  <Divider />
+                  <Typography variant="h6">SUNDAY</Typography>
 
-                    <div>
-                      <TextField
-                        name="sunday_breakfast"
-                        label="Breakfast"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={{ marginBottom: "1rem" }}
-                        value={sundayReadyBreakfast}
-                        onChange={(e) => {
-                          setSundayReadyBreakfast(e.target.value);
-                        }}
-                        required
-                      />
-                      <TextField
-                        name="sunday_lunch"
-                        label="Lunch"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={{ marginBottom: "1rem" }}
-                        value={sundayReadyLunch}
-                        onChange={(e) => {
-                          setSundayReadyLunch(e.target.value);
-                        }}
-                        required
-                      />
-                      <TextField
-                        name="sunday_dinner"
-                        label="Dinner"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        value={sundayReadyDinner}
-                        sx={{ marginBottom: "1rem" }}
-                        onChange={(e) => {
-                          setSundayReadyDinner(e.target.value);
-                        }}
-                        required
-                      />
-                    </div>
+                  <div>
+                    <TextField
+                      name="sunday_breakfast"
+                      label="Breakfast"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      sx={{ marginBottom: "1rem" }}
+                      value={sundayReadyBreakfast}
+                      onChange={(e) => {
+                        setSundayReadyBreakfast(e.target.value);
+                      }}
+                      required
+                    />
+                    <TextField
+                      name="sunday_lunch"
+                      label="Lunch"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      sx={{ marginBottom: "1rem" }}
+                      value={sundayReadyLunch}
+                      onChange={(e) => {
+                        setSundayReadyLunch(e.target.value);
+                      }}
+                      required
+                    />
+                    <TextField
+                      name="sunday_dinner"
+                      label="Dinner"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      value={sundayReadyDinner}
+                      sx={{ marginBottom: "1rem" }}
+                      onChange={(e) => {
+                        setSundayReadyDinner(e.target.value);
+                      }}
+                      required
+                    />
+                  </div>
 
-                    <Divider />
-                    <Typography variant="h6">MONDAY</Typography>
-                    <div>
-                      <TextField
-                        name="monday_breakfast"
-                        label="Breakfast"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        value={mondayReadyBreakfast}
-                        sx={{ marginBottom: "1rem" }}
-                        onChange={(e) => {
-                          setMondayReadyBreakfast(e.target.value);
-                        }}
-                        required
-                      />
-                      <TextField
-                        name="monday_lunch"
-                        label="Lunch"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        value={mondayReadyLunch}
-                        sx={{ marginBottom: "1rem" }}
-                        onChange={(e) => {
-                          setMondayReadyLunch(e.target.value);
-                        }}
-                        required
-                      />
-                      <TextField
-                        name="monday_dinner"
-                        label="Dinner"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        value={mondayReadyDinner}
-                        sx={{ marginBottom: "1rem" }}
-                        onChange={(e) => {
-                          setMondayReadyDinner(e.target.value);
-                        }}
-                        required
-                      />
-                    </div>
+                  <Divider />
+                  <Typography variant="h6">MONDAY</Typography>
+                  <div>
+                    <TextField
+                      name="monday_breakfast"
+                      label="Breakfast"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      value={mondayReadyBreakfast}
+                      sx={{ marginBottom: "1rem" }}
+                      onChange={(e) => {
+                        setMondayReadyBreakfast(e.target.value);
+                      }}
+                      required
+                    />
+                    <TextField
+                      name="monday_lunch"
+                      label="Lunch"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      value={mondayReadyLunch}
+                      sx={{ marginBottom: "1rem" }}
+                      onChange={(e) => {
+                        setMondayReadyLunch(e.target.value);
+                      }}
+                      required
+                    />
+                    <TextField
+                      name="monday_dinner"
+                      label="Dinner"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      value={mondayReadyDinner}
+                      sx={{ marginBottom: "1rem" }}
+                      onChange={(e) => {
+                        setMondayReadyDinner(e.target.value);
+                      }}
+                      required
+                    />
+                  </div>
 
-                    <Divider />
-                    <Typography variant="h6">TUESDAY</Typography>
-                    <div>
-                      <TextField
-                        name="tuesday_breakfast"
-                        label="Breakfast"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={{ marginBottom: "1rem" }}
-                        value={tuesdayReadyBreakfast}
-                        onChange={(e) => {
-                          setTuesdayReadyBreakfast(e.target.value);
-                        }}
-                        required
-                      />
-                      <TextField
-                        name="tuesday_lunch"
-                        label="Lunch"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={{ marginBottom: "1rem" }}
-                        value={tuesdayReadyLunch}
-                        onChange={(e) => {
-                          setTuesdayReadyLunch(e.target.value);
-                        }}
-                        required
-                      />
-                      <TextField
-                        name="tuesday_dinner"
-                        label="Dinner"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={{ marginBottom: "1rem" }}
-                        value={tuesdayReadyDinner}
-                        onChange={(e) => {
-                          setTuesdayReadyDinner(e.target.value);
-                        }}
-                        required
-                      />
-                    </div>
+                  <Divider />
+                  <Typography variant="h6">TUESDAY</Typography>
+                  <div>
+                    <TextField
+                      name="tuesday_breakfast"
+                      label="Breakfast"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      sx={{ marginBottom: "1rem" }}
+                      value={tuesdayReadyBreakfast}
+                      onChange={(e) => {
+                        setTuesdayReadyBreakfast(e.target.value);
+                      }}
+                      required
+                    />
+                    <TextField
+                      name="tuesday_lunch"
+                      label="Lunch"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      sx={{ marginBottom: "1rem" }}
+                      value={tuesdayReadyLunch}
+                      onChange={(e) => {
+                        setTuesdayReadyLunch(e.target.value);
+                      }}
+                      required
+                    />
+                    <TextField
+                      name="tuesday_dinner"
+                      label="Dinner"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      sx={{ marginBottom: "1rem" }}
+                      value={tuesdayReadyDinner}
+                      onChange={(e) => {
+                        setTuesdayReadyDinner(e.target.value);
+                      }}
+                      required
+                    />
+                  </div>
 
-                    <Divider />
-                    <Typography variant="h6">WEDNESDAY</Typography>
-                    <div>
-                      <TextField
-                        name="wednesday_breakfast"
-                        label="Breakfast"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={{ marginBottom: "1rem" }}
-                        value={wednesdayReadyBreakfast}
-                        onChange={(e) => {
-                          setWednesdayReadyBreakfast(e.target.value);
-                        }}
-                        required
-                      />
-                      <TextField
-                        name="wednesday_lunch"
-                        label="Lunch"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={{ marginBottom: "1rem" }}
-                        value={wednesdayReadyLunch}
-                        onChange={(e) => {
-                          setWednesdayReadyLunch(e.target.value);
-                        }}
-                        required
-                      />
-                      <TextField
-                        name="wednesday_dinner"
-                        label="Dinner"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={{ marginBottom: "1rem" }}
-                        value={wednesdayReadyDinner}
-                        onChange={(e) => {
-                          setWednesdayReadyDinner(e.target.value);
-                        }}
-                        required
-                      />
-                    </div>
+                  <Divider />
+                  <Typography variant="h6">WEDNESDAY</Typography>
+                  <div>
+                    <TextField
+                      name="wednesday_breakfast"
+                      label="Breakfast"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      sx={{ marginBottom: "1rem" }}
+                      value={wednesdayReadyBreakfast}
+                      onChange={(e) => {
+                        setWednesdayReadyBreakfast(e.target.value);
+                      }}
+                      required
+                    />
+                    <TextField
+                      name="wednesday_lunch"
+                      label="Lunch"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      sx={{ marginBottom: "1rem" }}
+                      value={wednesdayReadyLunch}
+                      onChange={(e) => {
+                        setWednesdayReadyLunch(e.target.value);
+                      }}
+                      required
+                    />
+                    <TextField
+                      name="wednesday_dinner"
+                      label="Dinner"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      sx={{ marginBottom: "1rem" }}
+                      value={wednesdayReadyDinner}
+                      onChange={(e) => {
+                        setWednesdayReadyDinner(e.target.value);
+                      }}
+                      required
+                    />
+                  </div>
 
-                    <Divider />
-                    <Typography variant="h6">THURSDAY</Typography>
-                    <div>
-                      <TextField
-                        name="thursday_breakfast"
-                        label="Breakfast"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={{ marginBottom: "1rem" }}
-                        value={thursdayReadyBreakfast}
-                        onChange={(e) => {
-                          setThursdayReadyBreakfast(e.target.value);
-                        }}
-                        required
-                      />
-                      <TextField
-                        name="thursday_lunch"
-                        label="Lunch"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={{ marginBottom: "1rem" }}
-                        value={thursdayReadyLunch}
-                        onChange={(e) => {
-                          setThursdayReadyLunch(e.target.value);
-                        }}
-                        required
-                      />
-                      <TextField
-                        name="thursday_dinner"
-                        label="Dinner"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={{ marginBottom: "1rem" }}
-                        value={thursdayReadyDinner}
-                        onChange={(e) => {
-                          setThursdayReadyDinner(e.target.value);
-                        }}
-                        required
-                      />
-                    </div>
+                  <Divider />
+                  <Typography variant="h6">THURSDAY</Typography>
+                  <div>
+                    <TextField
+                      name="thursday_breakfast"
+                      label="Breakfast"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      sx={{ marginBottom: "1rem" }}
+                      value={thursdayReadyBreakfast}
+                      onChange={(e) => {
+                        setThursdayReadyBreakfast(e.target.value);
+                      }}
+                      required
+                    />
+                    <TextField
+                      name="thursday_lunch"
+                      label="Lunch"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      sx={{ marginBottom: "1rem" }}
+                      value={thursdayReadyLunch}
+                      onChange={(e) => {
+                        setThursdayReadyLunch(e.target.value);
+                      }}
+                      required
+                    />
+                    <TextField
+                      name="thursday_dinner"
+                      label="Dinner"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      sx={{ marginBottom: "1rem" }}
+                      value={thursdayReadyDinner}
+                      onChange={(e) => {
+                        setThursdayReadyDinner(e.target.value);
+                      }}
+                      required
+                    />
+                  </div>
 
-                    <Divider />
-                    <Typography variant="h6">FRIDAY</Typography>
-                    <div>
-                      <TextField
-                        name="friday_breakfast"
-                        label="Breakfast"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={{ marginBottom: "1rem" }}
-                        value={fridayReadyBreakfast}
-                        onChange={(e) => {
-                          setFridayReadyBreakfast(e.target.value);
-                        }}
-                        required
-                      />
-                      <TextField
-                        name="friday_lunch"
-                        label="Lunch"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={{ marginBottom: "1rem" }}
-                        value={fridayReadyLunch}
-                        onChange={(e) => {
-                          setFridayReadyLunch(e.target.value);
-                        }}
-                        required
-                      />
-                      <TextField
-                        name="friday_dinner"
-                        label="Dinner"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={{ marginBottom: "1rem" }}
-                        value={fridayReadyDinner}
-                        onChange={(e) => {
-                          setFridayReadyDinner(e.target.value);
-                        }}
-                        required
-                      />
-                    </div>
+                  <Divider />
+                  <Typography variant="h6">FRIDAY</Typography>
+                  <div>
+                    <TextField
+                      name="friday_breakfast"
+                      label="Breakfast"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      sx={{ marginBottom: "1rem" }}
+                      value={fridayReadyBreakfast}
+                      onChange={(e) => {
+                        setFridayReadyBreakfast(e.target.value);
+                      }}
+                      required
+                    />
+                    <TextField
+                      name="friday_lunch"
+                      label="Lunch"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      sx={{ marginBottom: "1rem" }}
+                      value={fridayReadyLunch}
+                      onChange={(e) => {
+                        setFridayReadyLunch(e.target.value);
+                      }}
+                      required
+                    />
+                    <TextField
+                      name="friday_dinner"
+                      label="Dinner"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      sx={{ marginBottom: "1rem" }}
+                      value={fridayReadyDinner}
+                      onChange={(e) => {
+                        setFridayReadyDinner(e.target.value);
+                      }}
+                      required
+                    />
+                  </div>
 
-                    <Divider />
-                    <Typography variant="h6">SATURDAY</Typography>
-                    <div>
-                      <TextField
-                        name="saturday_breakfast"
-                        label="Breakfast"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={{ marginBottom: "1rem" }}
-                        value={saturdayReadyBreakfast}
-                        onChange={(e) => {
-                          setSaturdayReadyBreakfast(e.target.value);
-                        }}
-                        required
-                      />
+                  <Divider />
+                  <Typography variant="h6">SATURDAY</Typography>
+                  <div>
+                    <TextField
+                      name="saturday_breakfast"
+                      label="Breakfast"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      sx={{ marginBottom: "1rem" }}
+                      value={saturdayReadyBreakfast}
+                      onChange={(e) => {
+                        setSaturdayReadyBreakfast(e.target.value);
+                      }}
+                      required
+                    />
 
-                      <TextField
-                        name="saturday_lunch"
-                        label="Lunch"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={{ marginBottom: "1rem" }}
-                        value={saturdayReadyLunch}
-                        onChange={(e) => {
-                          setSaturdayReadyLunch(e.target.value);
-                        }}
-                        required
-                      />
-                      <TextField
-                        name="saturday_dinner"
-                        label="Dinner"
-                        margin="dense"
-                        fullWidth
-                        multiline
-                        rows={2}
-                        sx={{ marginBottom: "1rem" }}
-                        value={saturdayReadyDinner}
-                        onChange={(e) => {
-                          setSaturdayReadyDinner(e.target.value);
-                        }}
-                        required
-                      />
-                    </div>
+                    <TextField
+                      name="saturday_lunch"
+                      label="Lunch"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      sx={{ marginBottom: "1rem" }}
+                      value={saturdayReadyLunch}
+                      onChange={(e) => {
+                        setSaturdayReadyLunch(e.target.value);
+                      }}
+                      required
+                    />
+                    <TextField
+                      name="saturday_dinner"
+                      label="Dinner"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      sx={{ marginBottom: "1rem" }}
+                      value={saturdayReadyDinner}
+                      onChange={(e) => {
+                        setSaturdayReadyDinner(e.target.value);
+                      }}
+                      required
+                    />
+                  </div>
 
-                    <DialogActions sx={{ pt: "1.5rem", pb: "0rem" }}>
-                      <Button
-                        variant="contained"
-                        color="error"
-                        onClick={handleClose}
-                      >
-                        CANCEL
-                      </Button>
-                      <LoadingButton
-                        variant="contained"
-                        disabled={createReadyMealButtonIsDisabled}
-                        loading={isBtnLoading}
-                        type="submit"
-                      >
-                        <span>CREATE</span>
-                      </LoadingButton>
-                    </DialogActions>
-                  </DialogContent>
-                </form>
-              ) : (
-                <form></form>
-              )}
+                  <DialogActions sx={{ pt: "1.5rem", pb: "0rem" }}>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={handleClose}
+                    >
+                      CANCEL
+                    </Button>
+                    <LoadingButton
+                      variant="contained"
+                      disabled={createReadyMealButtonIsDisabled}
+                      loading={isBtnLoading}
+                      type="submit"
+                    >
+                      <span>CREATE</span>
+                    </LoadingButton>
+                  </DialogActions>
+                </DialogContent>
+              </form>
             </DialogContent>
           </Dialog>
           {/* MEAL PLANNING */}
@@ -1292,49 +1242,49 @@ function MealplantAuto() {
                             <TableCell>{meals.diet_type}</TableCell>
                             <TableCell>{meals.bmi}</TableCell>
                             <TableCell>
-                              {meals.bmi == "<16" ? (
+                              {meals.bmi === "<16" ? (
                                 <Typography
                                   sx={{ fontWeight: "bold", color: "#bc2020" }}
                                 >
                                   Severe Thinnes
                                 </Typography>
-                              ) : meals.bmi == "16 to 17" ? (
+                              ) : meals.bmi === "16 to 17" ? (
                                 <Typography
                                   sx={{ fontWeight: "bold", color: "#d38888" }}
                                 >
                                   Moderate Thinnes
                                 </Typography>
-                              ) : meals.bmi == "17 to 18.5" ? (
+                              ) : meals.bmi === "17 to 18.5" ? (
                                 <Typography
                                   sx={{ fontWeight: "bold", color: "#ffe400" }}
                                 >
                                   Mild Thinnes
                                 </Typography>
-                              ) : meals.bmi == "18.5 to 25" ? (
+                              ) : meals.bmi === "18.5 to 25" ? (
                                 <Typography
                                   sx={{ fontWeight: "bold", color: "#008137" }}
                                 >
                                   Normal
                                 </Typography>
-                              ) : meals.bmi == "25 to 30" ? (
+                              ) : meals.bmi === "25 to 30" ? (
                                 <Typography
                                   sx={{ fontWeight: "bold", color: "#ffe400" }}
                                 >
                                   Overweight
                                 </Typography>
-                              ) : meals.bmi == "30 to 35" ? (
+                              ) : meals.bmi === "30 to 35" ? (
                                 <Typography
                                   sx={{ fontWeight: "bold", color: "#d38888" }}
                                 >
                                   Obese Class I
                                 </Typography>
-                              ) : meals.bmi == "35 to 40" ? (
+                              ) : meals.bmi === "35 to 40" ? (
                                 <Typography
                                   sx={{ fontWeight: "bold", color: "#bc2020" }}
                                 >
                                   Obese Class II
                                 </Typography>
-                              ) : meals.bmi == ">40" ? (
+                              ) : meals.bmi === ">40" ? (
                                 <Typography
                                   sx={{ fontWeight: "bold", color: "#8a0101" }}
                                 >
@@ -1410,7 +1360,6 @@ function MealplantAuto() {
             />
 
             <Dialog
-              // key={meal.id}
               fullScreen={fullScreen}
               open={openModalUpdate}
               aria-labelledby="responsive-dialog-title"
@@ -1435,10 +1384,10 @@ function MealplantAuto() {
                         multiline
                         sx={{ marginBottom: "1rem" }}
                         required
-                        value={dietType}
+                        value={newDietType}
                         onChange={(e) => {
                           validateUpdateDietType(e.target.value);
-                          setDietType(e.target.value);
+                          setNewDietType(e.target.value);
                         }}
                         helperText="Please fill up diet type"
                       />
@@ -1893,7 +1842,6 @@ function MealplantAuto() {
                           CANCEL
                         </Button>
                         <LoadingButton
-                          // onClick={updateReadyMeal}
                           variant="contained"
                           // loading={isBtnLoading}
                           disabled={createReadyMealButtonIsDisabled}

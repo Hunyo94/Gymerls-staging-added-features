@@ -296,8 +296,10 @@ function Reservation() {
       validTime = 4;
     } else if (timeNows >= 1701 && timeNows < 1900) {
       validTime = 5;
-    } else if (timeNows >= 1901 && timeNows < 2359) {
+    } else if (timeNows >= 1901 && timeNows < 2100) {
       validTime = 6;
+    } else if (timeNows > 2101) {
+      validTime = 7;
     }
     setTimeNow(validTime);
   };
@@ -646,27 +648,27 @@ function Reservation() {
           }
         }
 
-        first_batch.length === 10
+        first_batch.length === 3
           ? setFirstBatchIsDisabled(true)
           : setFirstBatchIsDisabled(false);
 
-        second_batch.length === 10
+        second_batch.length === 3
           ? setSecondBatchIsDisabled(true)
           : setSecondBatchIsDisabled(false);
 
-        third_batch.length === 10
+        third_batch.length === 3
           ? setThirdBatchIsDisabled(true)
           : setThirdBatchIsDisabled(false);
 
-        fourth_batch.length === 10
+        fourth_batch.length === 3
           ? setFourthBatchIsDisabled(true)
           : setFourthBatchIsDisabled(false);
 
-        fifth_batch.length === 10
+        fifth_batch.length === 3
           ? setFifthBatchIsDisabled(true)
           : setFifthBatchIsDisabled(false);
 
-        last_batch.length === 10
+        last_batch.length === 3
           ? setLastBatchIsDisabled(true)
           : setLastBatchIsDisabled(false);
       });
@@ -748,15 +750,6 @@ function Reservation() {
                     helperText="Please select time slot"
                     required
                   >
-                    {/* {timeSlot.map((option) => (
-                      <MenuItem
-                        key={option.name}
-                        value={option.value}
-                        disabled={option.disabled}
-                      >
-                        {option.value}
-                      </MenuItem>
-                    ))} */}
                     <MenuItem disabled={firstBatchIsDisabled} value={"7-9AM"}>
                       {"7-9AM"}
                     </MenuItem>

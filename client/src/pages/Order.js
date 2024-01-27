@@ -28,14 +28,12 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Swal from "sweetalert2";
 import Axios from "axios";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import PrintIcon from "@mui/icons-material/Print";
 import Image from "mui-image";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import { ClickAwayListener } from "@mui/base/";
 import Select from "@mui/material/Select";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -98,29 +96,6 @@ function Product() {
       border: 0,
     },
   }));
-
-  const statusFilter = [
-    {
-      name: "All",
-      value: "All",
-      color: "",
-    },
-    {
-      name: "Pending",
-      value: "Pending",
-      color: "#ed6c02",
-    },
-    {
-      name: "Completed",
-      value: "Completed",
-      color: "#1976d2",
-    },
-    {
-      name: "Out-Of-Stock",
-      value: "Out-Of-Stock",
-      color: "#d32f2f",
-    },
-  ];
 
   const formatDate = (date) => {
     var dateToFormat = new Date(date);
@@ -394,11 +369,16 @@ function Product() {
     }
   };
 
+  const pesoFormat = new Intl.NumberFormat("fil-PH", {
+    style: "currency",
+    currency: "PHP",
+  }).format(totalSale);
+
   const downloadPdf = () => {
     const doc = new jsPDF();
     doc.text("ORDERS", 15, 12);
     doc.autoTable({ html: "#orderTable" });
-    doc.text("Grand Total : " + totalSale, 15, 280);
+    doc.text("Grand Total : " + pesoFormat, 15, 280);
     doc.text("_________________", 15, 281);
     doc.save("orders.pdf");
   };
@@ -634,7 +614,6 @@ function Product() {
                 <TableHead>
                   <TableRow>
                     <TableCell sx={{ fontWeight: "bold" }}>NAME</TableCell>
-                    {/* <TableCell sx={{ fontWeight: "bold" }}>ADDRESS</TableCell> */}
                     <TableCell sx={{ fontWeight: "bold" }}>CONTACT</TableCell>
                     <TableCell sx={{ fontWeight: "bold" }}>ITEMS</TableCell>
                     <TableCell sx={{ fontWeight: "bold" }}>METHOD</TableCell>
@@ -745,7 +724,7 @@ function Product() {
                   fontWeight: "bold",
                 }}
               >
-                GRAND TOTAL : {totalSale}
+                GRAND TOTAL : {pesoFormat}
               </Typography>
             </div>
             <TablePagination

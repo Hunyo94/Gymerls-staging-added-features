@@ -276,27 +276,27 @@ function Reservation() {
           }
         }
 
-        first_batch.length === 10
+        first_batch.length === 3
           ? setFirstBatchIsDisabled(true)
           : setFirstBatchIsDisabled(false);
 
-        second_batch.length === 10
+        second_batch.length === 3
           ? setSecondBatchIsDisabled(true)
           : setSecondBatchIsDisabled(false);
 
-        third_batch.length === 10
+        third_batch.length === 3
           ? setThirdBatchIsDisabled(true)
           : setThirdBatchIsDisabled(false);
 
-        fourth_batch.length === 10
+        fourth_batch.length === 3
           ? setFourthBatchIsDisabled(true)
           : setFourthBatchIsDisabled(false);
 
-        fifth_batch.length === 10
+        fifth_batch.length === 3
           ? setFifthBatchIsDisabled(true)
           : setFifthBatchIsDisabled(false);
 
-        last_batch.length === 10
+        last_batch.length === 3
           ? setLastBatchIsDisabled(true)
           : setLastBatchIsDisabled(false);
       });
@@ -436,6 +436,7 @@ function Reservation() {
     var hours = currentDate.getHours();
     var minutes = currentDate.getMinutes();
     const timeNows = hours + (minutes < 10 ? "0" : "") + minutes;
+    console.log(currentDate);
     let validTime = "";
     if (timeNows >= 700 && timeNows < 900) {
       validTime = 1;
@@ -449,8 +450,10 @@ function Reservation() {
       validTime = 4;
     } else if (timeNows >= 1701 && timeNows < 1900) {
       validTime = 5;
-    } else if (timeNows >= 1901 && timeNows < 2359) {
+    } else if (timeNows >= 1901 && timeNows < 2100) {
       validTime = 6;
+    } else if (timeNows > 2101) {
+      validTime = 7;
     }
     setTimeNow(validTime);
   };
@@ -571,7 +574,7 @@ function Reservation() {
                     username: localStorage.getItem("username"),
                     notes: data.get("reservation_notes"),
                     reservation_date: formatDate(reservationDate),
-                    status: "Pending",
+                    status: reservationStatus,
                     time_slot: data.get("time_slot"),
                     coach_name: data.get("coach_name"),
                     added_date: formatDate(new Date()),
@@ -583,7 +586,9 @@ function Reservation() {
                 userLog(
                   localStorage.getItem("username"),
                   "Create",
-                  "new reservation"
+                  "new reservation",
+                  data.get("reservation_notes"),
+                  selectedUser
                 );
 
                 Swal.fire({
@@ -629,7 +634,7 @@ function Reservation() {
                   username: localStorage.getItem("username"),
                   notes: data.get("reservation_notes"),
                   reservation_date: formatDate(reservationDate),
-                  status: "Pending",
+                  status: reservationStatus,
                   time_slot: data.get("time_slot"),
                   coach_name: data.get("coach_name"),
                   added_date: formatDate(new Date()),
@@ -641,7 +646,9 @@ function Reservation() {
               userLog(
                 localStorage.getItem("username"),
                 "Create",
-                "new reservation"
+                "new reservation",
+                data.get("reservation_notes"),
+                selectedUser
               );
 
               Swal.fire({
@@ -687,7 +694,7 @@ function Reservation() {
                 username: localStorage.getItem("username"),
                 notes: data.get("reservation_notes"),
                 reservation_date: formatDate(reservationDate),
-                status: "Pending",
+                status: reservationStatus,
                 time_slot: data.get("time_slot"),
                 coach_name: data.get("coach_name"),
                 added_date: formatDate(new Date()),
@@ -699,7 +706,9 @@ function Reservation() {
             userLog(
               localStorage.getItem("username"),
               "Create",
-              "new reservation"
+              "new reservation",
+              data.get("reservation_notes"),
+              selectedUser
             );
 
             Swal.fire({
@@ -1116,7 +1125,6 @@ function Reservation() {
                     onChange={(e) => {
                       setSelectedUser(e.target.value);
                     }}
-                    // defaultValue={"7-9AM"}
                     helperText="Please select user"
                     required
                   >

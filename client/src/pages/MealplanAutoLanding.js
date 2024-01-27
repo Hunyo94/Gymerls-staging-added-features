@@ -17,6 +17,7 @@ import {
   Tooltip,
   Collapse,
 } from "@mui/material";
+import CardMembershipIcon from "@mui/icons-material/CardMembership";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
@@ -409,10 +410,26 @@ export default function MiniDrawer() {
                 >
                   <ListItemIcon>
                     <Tooltip title="User logs">
-                      <RestaurantIcon />
+                      <ManageAccountsIcon />
                     </Tooltip>
                   </ListItemIcon>
                   <ListItemText primary="User logs" />
+                </ListItemButton>
+              </List>
+              <List component="div" disablePadding>
+                <ListItemButton
+                  sx={{ pl: 4 }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = "/membership";
+                  }}
+                >
+                  <ListItemIcon>
+                    <Tooltip title="Membership">
+                      <CardMembershipIcon />
+                    </Tooltip>
+                  </ListItemIcon>
+                  <ListItemText primary="Membership" />
                 </ListItemButton>
               </List>
               <List component="div" disablePadding>

@@ -7,10 +7,9 @@ import {
   Typography,
   CircularProgress,
   Backdrop,
+  Divider,
 } from "@mui/material";
 import Chart from "../components/Chart";
-import RestaurantIcon from "@mui/icons-material/Restaurant";
-// import BasicDateCalendar from "../components/Calendar";
 import PermContactCalendarOutlinedIcon from "@mui/icons-material/PermContactCalendarOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import EventAvailableOutlinedIcon from "@mui/icons-material/EventAvailableOutlined";
@@ -44,6 +43,8 @@ function Landing() {
   const [productCount, setProductCount] = useState(0);
   const [orderCount, setOrderCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [monthlySubscriptionSales, setMontlySubscriptionSales] = useState(0);
+  const [monthlySales, setMontlySales] = useState(0);
 
   // calendar - schedules
   const [firstBatch, setFirstBatch] = useState([]);
@@ -57,6 +58,7 @@ function Landing() {
 
   useEffect(() => {
     getTime();
+    userProfData();
     var formattedDate = formatDate(new Date());
     getReservationByDate(formattedDate);
 
@@ -84,6 +86,59 @@ function Landing() {
     }, 3000);
     return () => clearTimeout(timer);
   }, []);
+
+  const userProfData = () => {
+    const currentDate = formatDate(new Date());
+    transactData(currentDate);
+    fetch("http://localhost:3031/api/all-user-profile", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.length != 0) {
+          var monthlyPrice = data.filter(
+            (e) =>
+              e.date_added.slice(0, 4) >= currentDate.slice(0, 4) &&
+              e.date_added.slice(5, 7) === currentDate.slice(5, 7)
+          );
+          let t = 0;
+          monthlyPrice.map(({ price }) => (t = t + price));
+          const pesoFormat = new Intl.NumberFormat("fil-PH", {
+            style: "currency",
+            currency: "PHP",
+          }).format(t);
+          setMontlySubscriptionSales(pesoFormat);
+        } else {
+          setMontlySubscriptionSales("No data");
+        }
+      });
+  };
+
+  const transactData = (currentDate) => {
+    fetch("http://localhost:3031/api/transactions")
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.length != 0) {
+          const stats = data.filter((data) => data.status === "Completed");
+          const complete = stats.filter(
+            (trans) =>
+              trans.transaction_date.slice(5, 7) === currentDate.slice(5, 7)
+          );
+          let t = 0;
+          complete.map(({ total }) => (t = t + total));
+          const pesoFormat = new Intl.NumberFormat("fil-PH", {
+            style: "currency",
+            currency: "PHP",
+          }).format(t);
+          setMontlySales(pesoFormat);
+        } else {
+          setMontlySales("No data");
+        }
+      });
+  };
 
   function getTime() {
     const date = new Date();
@@ -328,6 +383,126 @@ function Landing() {
                   </Grid>
                 </Paper>
               </Grid>
+              <Grid item sm={6} xs={12} sx={{ padding: 1 }}>
+                <Paper
+                  square={false}
+                  elevation={3}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-evenly",
+                    alignItems: "center",
+                    padding: 2,
+                    color: "#fff",
+                  }}
+                >
+                  <Grid container>
+                    <Grid
+                      item
+                      xs={4}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          padding: ".5rem",
+                          color: "white",
+                          fontWeight: "550",
+                          marginBottom: "1  rem",
+                          backgroundColor: "green",
+                          borderRadius: ".2rem",
+                        }}
+                      >
+                        Monthly subscription sales
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        padding: "1.5rem",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          color: "#373737",
+                          fontWeight: "bold",
+                          fontFamily: "monospace",
+                        }}
+                        variant="h3"
+                      >
+                        {monthlySubscriptionSales}
+                        <Divider />
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </Grid>
+              <Grid item sm={6} xs={12} sx={{ padding: 1 }}>
+                <Paper
+                  square={false}
+                  elevation={3}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-evenly",
+                    alignItems: "center",
+                    padding: 2,
+                    color: "#fff",
+                  }}
+                >
+                  <Grid container sx={{ alignItems: "center" }}>
+                    <Grid
+                      item
+                      xs={4}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          padding: ".5rem",
+                          color: "white",
+                          fontWeight: "550",
+                          marginBottom: "1  rem",
+                          backgroundColor: "green",
+                          borderRadius: ".2rem",
+                        }}
+                      >
+                        Monthly product sales
+                      </Typography>
+                    </Grid>
+                    <Grid
+                      item
+                      xs={12}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        padding: "1.5rem",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          color: "#373737",
+                          fontWeight: "bold",
+                          fontFamily: "monospace",
+                        }}
+                        variant="h3"
+                      >
+                        {monthlySales}
+                        <Divider />
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </Grid>
 
               <Grid item xs={12} sx={{ padding: 1 }}>
                 <Paper elevation={3} sx={{ padding: 4 }}>
@@ -343,10 +518,10 @@ function Landing() {
                     <Box sx={{ width: "100%" }}>
                       <BorderLinearProgress
                         variant="determinate"
-                        value={firstBatch.length * 10}
+                        value={firstBatch.length * 33.33}
                       />
                       <Typography sx={{ color: "gray", fontSize: 12 }}>
-                        {10 - firstBatch.length + " slot(s) remaining"}
+                        {3 - firstBatch.length + " slot(s) remaining"}
                       </Typography>
                     </Box>
                   </Grid>
@@ -356,10 +531,10 @@ function Landing() {
                     <Box sx={{ width: "100%" }}>
                       <BorderLinearProgress
                         variant="determinate"
-                        value={secondBatch.length * 10}
+                        value={secondBatch.length * 33.33}
                       />
                       <Typography sx={{ color: "gray", fontSize: 12 }}>
-                        {10 - secondBatch.length + " slot(s) remaining"}
+                        {3 - secondBatch.length + " slot(s) remaining"}
                       </Typography>
                     </Box>
                   </Grid>
@@ -369,10 +544,10 @@ function Landing() {
                     <Box sx={{ width: "100%" }}>
                       <BorderLinearProgress
                         variant="determinate"
-                        value={thirdBatch.length * 10}
+                        value={thirdBatch.length * 33.33}
                       />
                       <Typography sx={{ color: "gray", fontSize: 12 }}>
-                        {10 - thirdBatch.length + " slot(s) remaining"}
+                        {3 - thirdBatch.length + " slot(s) remaining"}
                       </Typography>
                     </Box>
                   </Grid>
@@ -382,10 +557,10 @@ function Landing() {
                     <Box sx={{ width: "100%" }}>
                       <BorderLinearProgress
                         variant="determinate"
-                        value={fourthBatch.length * 10}
+                        value={fourthBatch.length * 33.33}
                       />
                       <Typography sx={{ color: "gray", fontSize: 12 }}>
-                        {10 - fourthBatch.length + " slot(s) remaining"}
+                        {3 - fourthBatch.length + " slot(s) remaining"}
                       </Typography>
                     </Box>
                   </Grid>
@@ -395,10 +570,10 @@ function Landing() {
                     <Box sx={{ width: "100%" }}>
                       <BorderLinearProgress
                         variant="determinate"
-                        value={fifthBatch.length * 10}
+                        value={fifthBatch.length * 33.33}
                       />
                       <Typography sx={{ color: "gray", fontSize: 12 }}>
-                        {10 - fifthBatch.length + " slot(s) remaining"}
+                        {3 - fifthBatch.length + " slot(s) remaining"}
                       </Typography>
                     </Box>
                   </Grid>
@@ -408,10 +583,10 @@ function Landing() {
                     <Box sx={{ width: "100%" }}>
                       <BorderLinearProgress
                         variant="determinate"
-                        value={lastBatch.length * 10}
+                        value={lastBatch.length * 33.33}
                       />
                       <Typography sx={{ color: "gray", fontSize: 12 }}>
-                        {10 - lastBatch.length + " slot(s) remaining"}
+                        {3 - lastBatch.length + " slot(s) remaining"}
                       </Typography>
                     </Box>
                   </Grid>

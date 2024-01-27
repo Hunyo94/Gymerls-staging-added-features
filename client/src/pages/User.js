@@ -40,6 +40,7 @@ import Swal from "sweetalert2";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import PrintIcon from "@mui/icons-material/Print";
+import { cleanDigitSectionValue } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";
 
 function User() {
   const relativeTime = require("dayjs/plugin/relativeTime");
@@ -92,6 +93,10 @@ function User() {
   const [passwordButton, setPasswordButton] = useState(false);
 
   const [createButtonIsDisabled, setcreateButtonIsDisabled] = useState(true);
+
+  const [membership, setMembershipData] = useState();
+  const [membershipPrice, setMembershipPrice] = useState([]);
+  const [price, setPrice] = useState(0);
 
   // MEAL DATA
   const [sundayBreakfast, setSundayBreakfast] = useState("");
@@ -157,17 +162,11 @@ function User() {
   const [saturdayReadyLunch, setSaturdayReadyLunch] = useState("");
   const [saturdayReadyDinner, setSaturdayReadyDinner] = useState("");
 
-  const membership = [
-    {
-      name: "premium",
-      value: "Premium",
-    },
-    {
-      name: "monthly",
-      value: "Monthly",
-    },
-  ];
+  const [startDateRange, setStartDateRange] = useState(dayjs(new Date()));
+  const [endDateRange, setEndDateRange] = useState(dayjs(new Date()));
 
+  const [tableHasNoData, setTableHasNoData] = useState(true);
+  const [totalSale, setTotalSale] = useState("0");
   const dietType = [
     {
       id: "1",
@@ -290,54 +289,6 @@ function User() {
         allowOutsideClick: false,
       });
     }
-    // Swal.fire({
-    //   icon: "info",
-    //   title: "Are you sure you want to create new account?",
-    //   text: "You won't be able to revert this!",
-    //   showCancelButton: true,
-    //   confirmButtonText: "Yes",
-    //   cancelButtonText: "No",
-    //   allowOutsideClick: false,
-    // }).then((result) => {
-    //   if (result.isConfirmed) {
-    //     fetch("http://localhost:3031/api/register", {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-type": "application/json",
-    //       },
-    //       body: JSON.stringify({
-    //         name: fullname,
-    //         username: username,
-    //         role: selectedRole,
-    //         isActive: 1,
-    //         password: (Math.random() + 1).toString(36).substring(4),
-    //       }),
-    //     })
-    //       .then((res) => res.json())
-    //       .then((result) => {
-    //         createUserProfile();
-    //         userLog(
-    //           localStorage.getItem("username"),
-    //           "Create",
-    //           "new user",
-    //           username
-    //         );
-    //       });
-    //     Swal.fire({
-    //       title: "User successfully created!",
-    //       icon: "success",
-    //       showConfirmButton: false,
-    //       timer: 1500,
-    //     }).then(function () {
-    //       setIsBtnLoading(false);
-    //       setOpen(false);
-    //       setIsLoading(true);
-    //       window.location.reload(false);
-    //     });
-    //   } else {
-    //     setIsBtnLoading(false);
-    //   }
-    // });
   };
 
   const formatDate = (date) => {
@@ -407,6 +358,7 @@ function User() {
         parent_contact: parentContact,
         parent_address: parentAddress,
         membership_type: membershipType,
+        price: price,
         mem_start_date: formattedStartDate,
         mem_end_date: formattedEndDate,
         added_by: localStorage.getItem("username"),
@@ -428,36 +380,64 @@ function User() {
   };
 
   useEffect(() => {
+    const currentDate = formatDate(new Date());
+    handleSubscription();
+    handleExpiration();
     const timer = setTimeout(() => {
       fetch("http://localhost:3031/api/users")
         .then((response) => response.json())
         .then((data) => {
-          var today = dateFormatter(new Date());
-
-          for (let item of data) {
-            var membershipEndDate = dateFormatter(item.mem_end_date);
-
-            if (today === membershipEndDate) {
-              fetch("http://localhost:3031/api/update-user-status", {
-                method: "PATCH",
-                headers: {
-                  "Content-type": "application/json",
-                },
-                body: JSON.stringify({
-                  isActive: 0,
-                  username: item.username,
-                }),
-              }).then((res) => res.json());
-              console.log("dumaan");
-            }
-          }
           setFilteredList(data);
           setUsers(data);
           setIsLoading(false);
+          if (data.length != 0) {
+            var monthlyPrice = data.filter(
+              (e) =>
+                e.date_added.slice(0, 4) >= currentDate.slice(0, 4) &&
+                e.date_added.slice(5, 7) === currentDate.slice(5, 7)
+            );
+            let t = 0;
+            {
+              monthlyPrice.map((e) => {
+                t = t + e.price;
+              });
+            }
+            setTotalSale(t);
+            setFilteredList(monthlyPrice);
+            setTableHasNoData(false);
+          } else {
+            setTableHasNoData(true);
+          }
         });
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  const handlePriceMembership = (e) => {
+    for (let item of membership)
+      if (item.name == e) {
+        const pesoFormat = new Intl.NumberFormat("fil-PH", {
+          style: "currency",
+          currency: "PHP",
+        }).format(item.price);
+        setPrice(item.price);
+        setMembershipPrice(pesoFormat);
+      }
+  };
+
+  const handleSubscription = () => {
+    fetch("http://localhost:3031/api/get-membership")
+      .then((response) => response.json())
+      .then((data) => {
+        let memData = [];
+        for (let item of data) {
+          if (item.status == 1) {
+            memData.push(item);
+          }
+        }
+        setMembershipData(memData);
+      });
+  };
 
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     "&:nth-of-type(odd)": {
@@ -482,6 +462,11 @@ function User() {
     })
       .then((res) => res.json())
       .then((result) => {
+        const pesoFormat = new Intl.NumberFormat("fil-PH", {
+          style: "currency",
+          currency: "PHP",
+        }).format(result[0].price);
+
         const bdate = formatDate(result[0].birthdate);
         const startDate = formatDate(result[0].mem_start_date);
         const endDate = formatDate(result[0].mem_end_date);
@@ -506,6 +491,7 @@ function User() {
         setParentAddress(result[0].parent_address);
 
         setMembershipType(result[0].membership_type);
+        setMembershipPrice(pesoFormat);
         setUpdateStartDate(startDate);
         setUpdateEndDate(endDate);
 
@@ -552,6 +538,7 @@ function User() {
             parent_contact: parentContact,
             parent_address: parentAddress,
             membership_type: membershipType,
+            price: price,
             mem_start_date: startDateFormatted,
             mem_end_date: endDateFormatted,
             username: username,
@@ -1026,6 +1013,59 @@ function User() {
     });
   };
 
+  const handleExpiration = () => {
+    fetch("http://localhost:3031/api/all-user-profile", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        for (let item of data) {
+          getDaysDifference(item.mem_end_date, item.username);
+        }
+      });
+  };
+
+  const getDaysDifference = (end_date, username) => {
+    const dateNow = new Date();
+    var date1 = new Date(formatDate(dateNow));
+    var date2 = new Date(formatDate(end_date));
+
+    // To calculate the time difference of two dates
+    var Difference_In_Time = date2.getTime() - date1.getTime();
+
+    // To calculate the no. of days between two dates
+    var result = Difference_In_Time / (1000 * 3600 * 24);
+
+    //the final no. of days (result)
+    // setMembershipEnd(result);
+    if (1 > result) {
+      fetch("http://localhost:3031/api/update-user-status", {
+        method: "PATCH",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          isActive: 0,
+          username: username,
+        }),
+      });
+    } else {
+      fetch("http://localhost:3031/api/update-user-status", {
+        method: "PATCH",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          isActive: 1,
+          username: username,
+        }),
+      });
+    }
+  };
+
   const handleUserStatus = (status, username) => {
     fetch("http://localhost:3031/api/update-user-status", {
       method: "PATCH",
@@ -1193,6 +1233,8 @@ function User() {
     const doc = new jsPDF();
     doc.text("List of User", 20, 10);
     doc.autoTable({ html: "#userTable" });
+    doc.text("Grand Total : " + pesoFormat, 15, 280);
+    doc.text("_________________", 15, 281);
     doc.save("users.pdf");
   };
 
@@ -1256,6 +1298,65 @@ function User() {
     }
   };
 
+  // TOTAL SUBS SALES
+  const handleSubsSales = () => {
+    let data = [];
+    for (let e of users) {
+      data.push(e);
+    }
+    const stats = data.filter((data) => data.isActive === 1);
+    let dateStart = startDateRange.format();
+    let dateEnd = endDateRange.format();
+    const [sYear, sMonth, sDay] = dateStart.split("-");
+    const [eYear, eMonth, eDay] = dateEnd.split("-");
+
+    let sdayNumber = Number(sDay.slice(0, 2)) - 1;
+    let edayNumber = Number(eDay.slice(0, 2)) - 1;
+
+    const startDateFiltered = new Date(sYear, +sMonth - 1, sdayNumber);
+    const endDateFiltered = new Date(
+      eYear,
+      +eMonth - 1,
+      edayNumber,
+      23,
+      59,
+      59,
+      999
+    );
+    var result = data.filter(
+      (e) =>
+        new Date(e.date_added.slice(0, 10) + " " + "00:00:00") >=
+          startDateFiltered &&
+        new Date(e.date_added.slice(0, 10) + " " + "00:00:00") <=
+          endDateFiltered
+    );
+    result.length === 0 ? setTableHasNoData(true) : setTableHasNoData(false);
+    setFilteredList(result);
+    // var complete = result.filter((e) => e.isActive === 1 || 0);
+    let t = 0;
+    result.map(({ price }) => (t = t + price));
+    setTotalSale(t);
+  };
+
+  const filteredByDate = (e) => {
+    const date = e.format();
+    const [sYear, sMonth, sDay] = date.split("-");
+    let dateNumber = Number(sDay.slice(0, 2)) - 1;
+    const complete = users.filter(
+      (e) => e.date_added.slice(0, 10) === date.slice(0, 8) + dateNumber
+    );
+    if (complete.length == 0) {
+      setTableHasNoData(true);
+    } else {
+      setTableHasNoData(false);
+      setFilteredList(complete);
+    }
+  };
+  const pesoFormat = new Intl.NumberFormat("fil-PH", {
+    style: "currency",
+    currency: "PHP",
+  }).format(totalSale);
+
   return (
     <>
       {isLoading ? (
@@ -1270,12 +1371,58 @@ function User() {
       ) : (
         <div>
           <Grid container>
-            <Grid item xs={12} md={7}>
+            <Grid item xs={3} md={2}>
               <Button variant="outlined" onClick={handleClickOpen}>
                 Create new user
               </Button>
             </Grid>
-            <Grid item xs={12} md={5}>
+            <Grid
+              item
+              xs={5}
+              sx={{ display: "flex", alignItems: "center", columnGap: "1rem" }}
+            >
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Date start"
+                  margin="dense"
+                  format="YYYY-MM-DD"
+                  sx={{ width: "30%" }}
+                  value={startDateRange}
+                  onChange={(newValue) => {
+                    setTotalSale("0");
+                    filteredByDate(newValue);
+                    setStartDateRange(newValue);
+                  }}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Date End"
+                  margin="dense"
+                  format="YYYY-MM-DD"
+                  sx={{ width: "30%" }}
+                  value={endDateRange}
+                  onChange={(newValue) => {
+                    setTotalSale("0");
+                    setEndDateRange(newValue);
+                  }}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+              <Button onClick={handleSubsSales}>
+                <Typography
+                  sx={{
+                    fontWeight: "400",
+                    fontSize: "1.3rem",
+                  }}
+                >
+                  Go
+                </Typography>
+              </Button>
+            </Grid>
+            <Grid item xs={6} md={4}>
               <TextField
                 label="Search username"
                 onChange={filterBySearch}
@@ -1623,26 +1770,50 @@ function User() {
               <Typography sx={{ marginTop: "1rem" }} variant="h6">
                 Membership
               </Typography>
-              <TextField
-                id="standard-select-membership"
-                select
-                fullWidth
-                margin="normal"
-                label="Membership"
-                value={membershipType}
-                sx={{ marginBottom: "1rem" }}
-                onChange={(e) => {
-                  setMembershipType(e.target.value);
-                }}
-                defaultValue={"Monthly"}
-                helperText="Please select membership"
-              >
-                {membership.map((option) => (
-                  <MenuItem key={option.name} value={option.value}>
-                    {option.value}
-                  </MenuItem>
-                ))}
-              </TextField>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    id="standard-select-membership"
+                    select
+                    margin="normal"
+                    label="Membership"
+                    value={membershipType}
+                    sx={{ marginBottom: "1rem" }}
+                    onChange={(e) => {
+                      handlePriceMembership(e.target.value);
+                      setMembershipType(e.target.value);
+                    }}
+                    defaultValue={"Monthly"}
+                    helperText="Please select membership"
+                  >
+                    {membership.map((option) => (
+                      <MenuItem key={option.id} value={option.name}>
+                        {option.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    id="standard-select-membership"
+                    inputProps={{
+                      readOnly: true,
+                      disableUnderline: true,
+                    }}
+                    readOnly
+                    margin="normal"
+                    label="Price"
+                    value={membershipPrice}
+                    sx={{ marginBottom: "1rem" }}
+                    onChange={(e) => {
+                      setMembershipPrice(e.target.value);
+                    }}
+                    defaultValue={"Monthly"}
+                  ></TextField>
+                </Grid>
+              </Grid>
               <Grid container spacing={2}>
                 <Grid item xs={6}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -1985,25 +2156,48 @@ function User() {
                 <Typography sx={{ marginTop: "1rem" }} variant="h6">
                   Membership
                 </Typography>
-                <TextField
-                  id="standard-select-membership"
-                  select
-                  fullWidth
-                  margin="normal"
-                  label="Membership"
-                  value={membershipType}
-                  sx={{ marginBottom: "1rem" }}
-                  onChange={(e) => {
-                    setMembershipType(e.target.value);
-                  }}
-                  helperText="Please select membership"
-                >
-                  {membership.map((option) => (
-                    <MenuItem key={option.name} value={option.value}>
-                      {option.value}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-select-membership"
+                      select
+                      margin="normal"
+                      label="Membership"
+                      value={membershipType}
+                      sx={{ marginBottom: "1rem" }}
+                      onChange={(e) => {
+                        handlePriceMembership(e.target.value);
+                        setMembershipType(e.target.value);
+                      }}
+                      defaultValue={"Monthly"}
+                      helperText="Please select membership"
+                    >
+                      {membership.map((option) => (
+                        <MenuItem key={option.id} value={option.name}>
+                          {option.name}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      fullWidth
+                      id="standard-select-membership"
+                      inputProps={{
+                        readOnly: "true",
+                      }}
+                      margin="normal"
+                      label="Price"
+                      value={membershipPrice}
+                      sx={{ marginBottom: "1rem" }}
+                      onChange={(e) => {
+                        setMembershipPrice(e.target.value);
+                      }}
+                      defaultValue={"Monthly"}
+                    ></TextField>
+                  </Grid>
+                </Grid>
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -2950,100 +3144,139 @@ function User() {
                     <TableCell sx={{ fontWeight: "bold" }}>USERNAME</TableCell>
                     <TableCell sx={{ fontWeight: "bold" }}>ROLE</TableCell>
                     <TableCell sx={{ fontWeight: "bold" }}>NAME</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>
+                      SUBSCRIPTION
+                    </TableCell>
                     <TableCell sx={{ fontWeight: "bold" }}>ADDED BY</TableCell>
                     <TableCell sx={{ fontWeight: "bold" }}>ACTIVE</TableCell>
                     <TableCell sx={{ fontWeight: "bold" }} align="center">
                       ACTIONS
                     </TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>
+                      DATE ADDED
+                    </TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
-                  {filteredList
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((user) => {
-                      return (
-                        <StyledTableRow
-                          hover
-                          // role="checkbox"
-                          tabIndex={-1}
-                          key={user.id}
-                        >
-                          <TableCell>{user.username}</TableCell>
-                          <TableCell>{user.role}</TableCell>
-                          <TableCell>{user.name}</TableCell>
-                          <TableCell>{user.added_by}</TableCell>
-                          <TableCell>
-                            <Switch
-                              onChange={(e) => {
-                                changeUserStatus(
-                                  e.target.checked,
-                                  user.username
-                                );
-                              }}
-                              defaultChecked={user.isActive ? true : false}
-                            />
-                          </TableCell>
-                          <TableCell align="center">
-                            <Button
-                              onClick={() =>
-                                handleClickOpenModalUpdate(user.username)
-                              }
-                              variant="text"
-                              color="success"
-                              sx={{ marginRight: ".5rem" }}
-                            >
-                              Update
-                            </Button>
-                            {user.role === "admin" ? (
+                {tableHasNoData ? (
+                  <TableBody>
+                    <StyledTableRow>
+                      <TableCell align="center" colSpan={10}>
+                        {"No data available"}
+                      </TableCell>
+                    </StyledTableRow>
+                  </TableBody>
+                ) : (
+                  <TableBody>
+                    {filteredList
+                      .slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                      .map((user) => {
+                        const pesoFormat = new Intl.NumberFormat("fil-PH", {
+                          style: "currency",
+                          currency: "PHP",
+                        }).format(user.price);
+                        return (
+                          <StyledTableRow
+                            hover
+                            // role="checkbox"
+                            tabIndex={-1}
+                            key={user.id}
+                          >
+                            <TableCell>{user.username}</TableCell>
+                            <TableCell>{user.role}</TableCell>
+                            <TableCell>{user.name}</TableCell>
+                            <TableCell>{pesoFormat}</TableCell>
+                            <TableCell>{user.added_by}</TableCell>
+                            <TableCell>
+                              <Switch
+                                onChange={(e) => {
+                                  changeUserStatus(
+                                    e.target.checked,
+                                    user.username
+                                  );
+                                }}
+                                defaultChecked={user.isActive ? true : false}
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Button
+                                onClick={() =>
+                                  handleClickOpenModalUpdate(user.username)
+                                }
+                                variant="text"
+                                color="success"
+                                sx={{ marginRight: ".5rem" }}
+                              >
+                                Update
+                              </Button>
+                              {user.role === "admin" ? (
+                                <Button
+                                  variant="text"
+                                  disabled
+                                  color="warning"
+                                  onClick={() =>
+                                    handleOpenModalMealPlanning(user.username)
+                                  }
+                                >
+                                  Meal plan
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="text"
+                                  color="warning"
+                                  onClick={() =>
+                                    handleOpenModalMealPlanning(user.username)
+                                  }
+                                >
+                                  Meal plan
+                                </Button>
+                              )}
                               <Button
                                 variant="text"
-                                disabled
-                                color="warning"
+                                color="success"
+                                sx={{ marginRight: ".5rem" }}
                                 onClick={() =>
-                                  handleOpenModalMealPlanning(user.username)
+                                  handleOpenModalUpdatePassword(
+                                    user.username,
+                                    user.password
+                                  )
                                 }
                               >
-                                Meal plan
+                                Update Password
                               </Button>
-                            ) : (
-                              <Button
-                                variant="text"
-                                color="warning"
-                                onClick={() =>
-                                  handleOpenModalMealPlanning(user.username)
-                                }
+                              <IconButton
+                                aria-label="cart"
+                                onClick={() => deleteUser(user.username)}
                               >
-                                Meal plan
-                              </Button>
-                            )}
-                            <Button
-                              variant="text"
-                              color="success"
-                              sx={{ marginRight: ".5rem" }}
-                              onClick={() =>
-                                handleOpenModalUpdatePassword(
-                                  user.username,
-                                  user.password
-                                )
-                              }
-                            >
-                              Update Password
-                            </Button>
-                            <IconButton
-                              aria-label="cart"
-                              onClick={() => deleteUser(user.username)}
-                            >
-                              <DeleteForeverIcon color="error" />
-                            </IconButton>
-                          </TableCell>
-                        </StyledTableRow>
-                      );
-                    })}
-                </TableBody>
+                                <DeleteForeverIcon color="error" />
+                              </IconButton>
+                            </TableCell>
+                            <TableCell>{formatDate(user.date_added)}</TableCell>
+                          </StyledTableRow>
+                        );
+                      })}
+                  </TableBody>
+                )}
               </Table>
             </TableContainer>
+            <div
+              style={{ position: "absolute", width: "5rem", height: "10rem" }}
+            >
+              <Typography
+                sx={{
+                  py: "1rem",
+                  width: "50rem",
+                  mx: "1rem",
+                  fontWeight: "bold",
+                }}
+              >
+                GRAND TOTAL : {pesoFormat}
+              </Typography>
+            </div>
             <TablePagination
-              rowsPerPageOptions={[10, 15, 20]}
+              rowsPerPageOptions={[10, 50, 100]}
               component="div"
               count={filteredList.length}
               rowsPerPage={rowsPerPage}
@@ -3060,14 +3293,24 @@ function User() {
                     <TableCell sx={{ fontWeight: "bold" }}>USERNAME</TableCell>
                     <TableCell sx={{ fontWeight: "bold" }}>ROLE</TableCell>
                     <TableCell sx={{ fontWeight: "bold" }}>NAME</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>
+                      SUBSCRIPTION
+                    </TableCell>
                     <TableCell sx={{ fontWeight: "bold" }}>ADDED BY</TableCell>
                     <TableCell sx={{ fontWeight: "bold" }}>ACTIVE</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>
+                      DATE ADDED
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {filteredList
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((user) => {
+                      const pesoFormat = new Intl.NumberFormat("fil-PH", {
+                        style: "currency",
+                        currency: "PHP",
+                      }).format(user.price);
                       return (
                         <StyledTableRow
                           hover
@@ -3078,8 +3321,10 @@ function User() {
                           <TableCell>{user.username}</TableCell>
                           <TableCell>{user.role}</TableCell>
                           <TableCell>{user.name}</TableCell>
+                          <TableCell>{user.price}</TableCell>
                           <TableCell>{user.added_by}</TableCell>
                           <TableCell>{user.isActive}</TableCell>
+                          <TableCell>{formatDate(user.date_added)}</TableCell>
                         </StyledTableRow>
                       );
                     })}
