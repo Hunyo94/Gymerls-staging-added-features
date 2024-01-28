@@ -28,6 +28,15 @@ app.use(express.json());
 // });
 
 // LIVE ENV
+// var db = mysql.createPool({
+//   connectionLimit: 10,
+//   host: "bddlr9pbqmzatuff55mc-mysql.services.clever-cloud.com",
+//   user: "ukshebizwfcgdcsr",
+//   password: "iKo5fQGAqKbXGf3Yvy7",
+//   database: "bddlr9pbqmzatuff55mc",
+// });
+
+//LIVE ENV
 var db = mysql.createPool({
   connectionLimit: 10,
   host: "bddlr9pbqmzatuff55mc-mysql.services.clever-cloud.com",
