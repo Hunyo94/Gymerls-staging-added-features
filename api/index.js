@@ -19,24 +19,23 @@ app.use(express.json());
 // });
 
 // STAGING ENV
-var db = mysql.createPool({
-  connectionLimit: 10,
-  host: "bnsq8og5rjf4dwackssg-mysql.services.clever-cloud.com",
-  user: "uw8xtifdnotuaahq",
-  password: "kDjmfS31U20LhADZ2FsU",
-  database: "bnsq8og5rjf4dwackssg",
-  port: "3306",
-});
+// var db = mysql.createPool({
+//   connectionLimit: 10,
+//   host: "bhlhvogdifassil6j7ec-mysql.services.clever-cloud.com",
+//   user: "uw8xtifdnotuaahq",
+//   password: "kDjmfS31U20LhADZ2FsU",
+//   database: "bhlhvogdifassil6j7ec",
+// });
 
 // LIVE ENV
-// var db = mysql.createPool({
-//   connectionLimit: 15,
-//   host: "bddlr9pbqmzatuff55mc-mysql.services.clever-cloud.com",
-//   user: "ukshebizwfcgdcsr",
-//   password: "cdstDhnXTcaMkHqYF5pJ",
-//   database: "bddlr9pbqmzatuff55mc",
-//   port: "20285",
-// });
+var db = mysql.createPool({
+  connectionLimit: 10,
+  host: "mysql-162219-0.cloudclusters.net",
+  user: "admin",
+  password: "c2w4vFS2",
+  database: "gymerls_db",
+  port: "19954",
+});
 
 app.get("/", function (req, res) {
   res.send("Hello World!");
@@ -109,7 +108,8 @@ app.get("/api/users", (req, res) => {
   const sql = `SELECT * FROM users INNER JOIN user_profile ON users.username = user_profile.username`;
   db.query(sql, (err, data) => {
     if (err) {
-      return res.json("Error");
+      // return res.json("Error");
+      return err.message;
     }
     return res.json(data);
   });
@@ -131,7 +131,8 @@ app.get("/api/user-membership", (req, res) => {
   const sql = `SELECT * FROM users INNER JOIN user_profile ON users.username = user_profile.username WHERE user_profile.membership_type = "Premium"`;
   db.query(sql, (err, data) => {
     if (err) {
-      return res.json("Error");
+      // return res.json("Error");
+      return err.message;
     }
     return res.json(data);
   });
