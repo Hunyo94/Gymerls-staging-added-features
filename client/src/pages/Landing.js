@@ -112,7 +112,7 @@ function Landing() {
           }).format(t);
           setMontlySubscriptionSales(pesoFormat);
         } else {
-          setMontlySubscriptionSales("No data");
+          setMontlySubscriptionSales(0);
         }
       });
   };
@@ -135,7 +135,7 @@ function Landing() {
           }).format(t);
           setMontlySales(pesoFormat);
         } else {
-          setMontlySales("No data");
+          setMontlySales(0);
         }
       });
   };

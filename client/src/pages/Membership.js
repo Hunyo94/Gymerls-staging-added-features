@@ -40,6 +40,7 @@ function Membership() {
 
   const [membership, setMembership] = useState("");
   const [price, setPrice] = useState();
+  const [countLength, setCountLength] = useState(0);
 
   // READY MEAL DATA
 
@@ -203,6 +204,7 @@ function Membership() {
         .then((response) => response.json())
         .then((data) => {
           if (data.length !== 0) {
+            setCountLength(data.length);
             setFilteredReadyMeals(data);
             setSubscriptionData(true);
           } else {
@@ -628,7 +630,7 @@ function Membership() {
             <TablePagination
               rowsPerPageOptions={[10, 15, 20]}
               component="div"
-              count={filteredMembership.length}
+              count={countLength}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}

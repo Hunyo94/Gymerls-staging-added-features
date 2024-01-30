@@ -19,31 +19,24 @@ app.use(express.json());
 // });
 
 // STAGING ENV
-// var db = mysql.createPool({
-//   connectionLimit: 10,
-//   host: "bhpkgks7swlwl1zrnvta-mysql.services.clever-cloud.com",
-//   user: "uo06jrqvwzwursra",
-//   password: "27tP2Lu9tKKpJqIBzWC7",
-//   database: "bhpkgks7swlwl1zrnvta",
-// });
+var db = mysql.createPool({
+  connectionLimit: 10,
+  host: "bnsq8og5rjf4dwackssg-mysql.services.clever-cloud.com",
+  user: "uw8xtifdnotuaahq",
+  password: "kDjmfS31U20LhADZ2FsU",
+  database: "bnsq8og5rjf4dwackssg",
+  port: "3306",
+});
 
 // LIVE ENV
 // var db = mysql.createPool({
-//   connectionLimit: 10,
+//   connectionLimit: 15,
 //   host: "bddlr9pbqmzatuff55mc-mysql.services.clever-cloud.com",
 //   user: "ukshebizwfcgdcsr",
-//   password: "iKo5fQGAqKbXGf3Yvy7",
+//   password: "cdstDhnXTcaMkHqYF5pJ",
 //   database: "bddlr9pbqmzatuff55mc",
+//   port: "20285",
 // });
-
-//LIVE ENV
-var db = mysql.createPool({
-  connectionLimit: 10,
-  host: "bddlr9pbqmzatuff55mc-mysql.services.clever-cloud.com",
-  user: "ukshebizwfcgdcsr",
-  password: "iKo5fQGAqKbXGf3Yvy7",
-  database: "bddlr9pbqmzatuff55mc",
-});
 
 app.get("/", function (req, res) {
   res.send("Hello World!");

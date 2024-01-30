@@ -407,7 +407,6 @@ function Reservation() {
     setSelectStatus(status);
 
     if (status === "All") {
-      // filteredDataByDate(filterByDate === null ? new Date() : filterByDate);
       window.location.reload(false);
     } else {
       fetch(

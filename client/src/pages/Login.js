@@ -85,6 +85,7 @@ export default function SignInSide() {
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log(data);
         if (data.length <= 0) {
           Swal.fire({
             title: "Authentication Failed",

@@ -380,8 +380,9 @@ function User() {
       })
         .then((response) => response.json())
         .then((data) => {
-          if (data === 0) {
+          if (data == 0) {
             setTableHasNoData(false);
+            setIsLoading(false);
           } else {
             setFilteredList(data);
             setUsers(data);
@@ -411,7 +412,7 @@ function User() {
       .then((data) => {
         let memData = [];
         for (let item of data) {
-          if (item.status == 1) {
+          if (item.status === 1) {
             memData.push(item);
           }
         }
@@ -629,7 +630,7 @@ function User() {
 
   const handleOnchangeUpdateDiet = (e) => {
     for (let item of recommendedMeals) {
-      if (item.diet_type == e) {
+      if (item.diet_type === e) {
         //CREATE MEAL DATA
         setSundayBreakfast(item.ready_sunday_breakfast);
         setSundayLunch(item.ready_sunday_lunch);
@@ -770,7 +771,7 @@ function User() {
     event.preventDefault();
     setIsBtnLoading(true);
     const data = new FormData(event.currentTarget);
-    if (bmiMessage == "No data" || recommendedMeals == "No diet available") {
+    if (bmiMessage === "No data" || recommendedMeals === "No diet available") {
       console.log("No diet available");
       Swal.fire({
         icon: "info",
@@ -1095,7 +1096,7 @@ function User() {
   //HANDLE ONCHANGE DIET TYPE
   const handleOnchangeDiet = (e) => {
     for (let item of recommendedMeals) {
-      if (item.diet_type == e) {
+      if (item.diet_type === e) {
         //CREATE MEAL DATA
         setSundayReadyBreakfast(item.ready_sunday_breakfast);
         setSundayReadyLunch(item.ready_sunday_lunch);
@@ -1675,7 +1676,7 @@ function User() {
                 </Grid>
 
                 <Grid container spacing={2}>
-                  <Grid item xs={4}>
+                  <Grid xs={4}>
                     <TextField
                       id="contact"
                       label="Contact no."
