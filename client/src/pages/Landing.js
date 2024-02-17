@@ -112,7 +112,11 @@ function Landing() {
           }).format(t);
           setMontlySubscriptionSales(pesoFormat);
         } else {
-          setMontlySubscriptionSales(0);
+          const pesoFormat = new Intl.NumberFormat("fil-PH", {
+            style: "currency",
+            currency: "PHP",
+          }).format(0);
+          setMontlySubscriptionSales(pesoFormat);
         }
       });
   };
@@ -135,7 +139,11 @@ function Landing() {
           }).format(t);
           setMontlySales(pesoFormat);
         } else {
-          setMontlySales(0);
+          const pesoFormat = new Intl.NumberFormat("fil-PH", {
+            style: "currency",
+            currency: "PHP",
+          }).format(0);
+          setMontlySales(pesoFormat);
         }
       });
   };

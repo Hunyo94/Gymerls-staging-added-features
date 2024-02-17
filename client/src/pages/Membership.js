@@ -21,6 +21,7 @@ import {
   Backdrop,
   Switch,
   InputAdornment,
+  MenuItem,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme, styled } from "@mui/material/styles";
@@ -536,7 +537,7 @@ function Membership() {
               )} */}
             </DialogContent>
           </Dialog>
-          {/* MEAL SUBSCRIPTIONS*/}
+          {/* DATA SUBSCRIPTIONS*/}
 
           <Paper sx={{ width: "100%", overflow: "hidden" }} elevation={3}>
             <TableContainer sx={{ maxHeight: 700 }}>
