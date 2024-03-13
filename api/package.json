@@ -22,5 +22,6 @@
     "nodemon": "^2.0.22",
     "serverless-mysql": "^1.5.5"
   },
+  "devDependencies": {},
   "description": ""
 }

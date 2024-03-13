@@ -30,11 +30,11 @@ app.use(express.json());
 // LIVE ENV
 var db = mysql.createPool({
   connectionLimit: 10,
-  host: "mysql-165409-0.cloudclusters.net",
+  host: "mysql-165958-0.cloudclusters.net",
   user: "admin",
-  password: "6OUavWxq",
+  password: "RtheHNsy",
   database: "gymerls_db",
-  port: "10052",
+  port: "10030",
 });
 
 app.get("/", function (req, res) {
@@ -1199,7 +1199,7 @@ app.post("/api/all-user-profile", (req, res) => {
 //   });
 // });
 
-const port = 3031 || process.env.PORT;
+const port = 3030 || process.env.PORT;
 
 app.listen(port, () => {
   console.log(`server running in port ${port}`);
