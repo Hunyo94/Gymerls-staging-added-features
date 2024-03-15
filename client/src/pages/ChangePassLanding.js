@@ -431,7 +431,7 @@ export default function MiniDrawer() {
                       <CardMembershipIcon />
                     </Tooltip>
                   </ListItemIcon>
-                  <ListItemText primary="Ready meals" />
+                  <ListItemText primary="Membership" />
                 </ListItemButton>
               </List>
               <List component="div" disablePadding>
