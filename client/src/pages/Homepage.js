@@ -477,13 +477,14 @@ function DrawerAppBar(props) {
                     maxWidth: "15rem",
                   }}
                 >
-                  <Image src="../images/new-qr.jpg" alt="qr-code.jpg" />
+                  <Image src="../images/new-qr.png" alt="qr-code.jpg" />
                   <Link
-                    to="https://shorturl.at/ghCG0"
+                    to="https://shorturl.at/ceqs1"
                     underline="always"
                     sx={{ textAlign: "center" }}
+                    target="_blank"
                   >
-                    {"https://shorturl.at/ghCG0"}
+                    {"Download"}
                   </Link>
                 </Stack>
               </Grid>
