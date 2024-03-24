@@ -479,7 +479,7 @@ function DrawerAppBar(props) {
                 >
                   <Image src="../images/new-qr.png" alt="qr-code.jpg" />
                   <Link
-                    to="https://shorturl.at/ceqs1"
+                    to="https://drive.usercontent.google.com/download?id=1aTl8UmB8_25FbpePyDJ9Cv9EirVYZUB4&export=download&authuser=0"
                     underline="always"
                     sx={{ textAlign: "center" }}
                     target="_blank"
