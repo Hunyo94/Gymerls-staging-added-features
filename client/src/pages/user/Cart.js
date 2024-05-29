@@ -579,7 +579,10 @@ function Cart() {
                           alignItems={"center"}
                           justifyContent={"center"}
                         >
-                          <Button onClick={() => decrementQuantity(item.id)}>
+                          <Button
+                            disabled={decrementDisabled}
+                            onClick={() => decrementQuantity(item.id)}
+                          >
                             -
                           </Button>
                           <Typography>{item.quantity}</Typography>
