@@ -154,7 +154,6 @@ function Cart() {
       cartItems.map((item) => {
         // id === item.id ? { ...item, item.quantity + 1)  } : item;
         if (id === item.id) {
-          console.log(item.quantity);
           if (item.quantity === 2) {
             setDecrementDisabled(true);
           }
