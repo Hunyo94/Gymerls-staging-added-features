@@ -29,7 +29,6 @@ function Cart() {
   const [fullname, setFullname] = useState("");
   const [contact, setContact] = useState("");
   // const [totalAmount, setTotalAmount] = useState(0);
-  const [decrementDisabled, setDecrementDisabled] = useState(false);
 
   const [newCart, setNewCart] = useState([]);
 

@@ -298,7 +298,7 @@ function Product() {
   const filteredByDate = (e) => {
     const date = e.format();
     const [sYear, sMonth, sDay] = date.split("-");
-    let dateNumber = Number(sDay.slice(0, 2)) - 1;
+    let dateNumber = Number(sDay.slice(0, 2));
     const complete = transaction.filter(
       (trans) =>
         trans.transaction_date.slice(0, 10) === date.slice(0, 8) + dateNumber
@@ -342,14 +342,14 @@ function Product() {
       data.push(e);
     }
     const stats = data.filter((data) => data.status === "Completed");
-    if (startDate != "" && endDate != "") {
+    if (startDate !== "" && endDate !== "") {
       let dateStart = startDate.format();
       let dateEnd = endDate.format();
       const [sYear, sMonth, sDay] = dateStart.split("-");
       const [eYear, eMonth, eDay] = dateEnd.split("-");
 
-      let sdayNumber = Number(sDay.slice(0, 2)) - 1;
-      let edayNumber = Number(eDay.slice(0, 2)) - 1;
+      let sdayNumber = Number(sDay.slice(0, 2));
+      let edayNumber = Number(eDay.slice(0, 2));
 
       const startDateFiltered = new Date(sYear, +sMonth - 1, sdayNumber);
       const endDateFiltered = new Date(
