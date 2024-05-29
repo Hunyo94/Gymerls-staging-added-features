@@ -308,7 +308,7 @@ function DrawerAppBar(props) {
                     </Typography>
                   </Grid>
                   <Grid item xs={2}>
-                    <Typography>{item.price}</Typography>
+                    <Typography>{"₱ " + item.price}</Typography>
                   </Grid>
                   <Grid item xs={3}>
                     <Typography>
@@ -436,7 +436,7 @@ function DrawerAppBar(props) {
                             {item.product_name}
                           </Typography>
                           <Typography>{item.description}</Typography>
-                          <Typography>{item.price}</Typography>
+                          <Typography>{"₱ " + item.price}</Typography>
                           <Button
                             variant="contained"
                             fullWidth

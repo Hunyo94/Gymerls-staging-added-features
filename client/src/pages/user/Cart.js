@@ -36,7 +36,6 @@ function Cart() {
 
   const [grandTotal, setGrandTotal] = useState(0);
   const [totalQuantity, setTotalQuantity] = useState(0);
-  const [decrementDisabled, setDecrementDisabled] = useState(false);
   // DIALOG BOX - CHECKOUT
   const [open, setOpen] = useState(false);
 
@@ -60,11 +59,6 @@ function Cart() {
         setCart(result);
         objectLength(result);
         findSumUsingReduce(result);
-        result.map((item) => {
-          if (item.quantity === 1) {
-            setDecrementDisabled(true);
-          }
-        });
         let t = 0;
         result.map(({ sub_total }) => (t = t + sub_total));
 
@@ -117,9 +111,6 @@ function Cart() {
 
     setCart((cartItems) =>
       cartItems.map((item) => {
-        if (item.quantity === 1) {
-          setDecrementDisabled(false);
-        }
         if (id === item.id) {
           item.quantity++;
           item.sub_total = item.quantity * item.price;
@@ -153,9 +144,6 @@ function Cart() {
       cartItems.map((item) => {
         // id === item.id ? { ...item, item.quantity + 1)  } : item;
         if (id === item.id) {
-          if (item.quantity === 2) {
-            setDecrementDisabled(true);
-          }
           item.quantity--;
           item.sub_total = item.quantity * item.price;
         }
@@ -569,7 +557,7 @@ function Cart() {
                           <Typography>{item.product_name}</Typography>
                         </Grid>
                         <Grid item xs={1}>
-                          <Typography>{item.price}</Typography>
+                          <Typography>{"₱ " + item.price}</Typography>
                         </Grid>
                         <Grid
                           item
@@ -579,7 +567,7 @@ function Cart() {
                           justifyContent={"center"}
                         >
                           <Button
-                            disabled={decrementDisabled}
+                            disabled={item.quantity === 1}
                             onClick={() => decrementQuantity(item.id)}
                           >
                             -
@@ -590,7 +578,9 @@ function Cart() {
                           </Button>
                         </Grid>
                         <Grid item xs={2}>
-                          <Typography>{item.price * item.quantity}</Typography>
+                          <Typography>
+                            {"₱ " + item.price * item.quantity}
+                          </Typography>
                         </Grid>
                         <Grid item xs={1}>
                           <IconButton
@@ -613,7 +603,7 @@ function Cart() {
                     </Grid>
                     <Grid item xs={2}>
                       <Typography variant="h5" fontWeight={"bold"}>
-                        {grandTotal}
+                        {"₱ " + grandTotal}
                       </Typography>
                     </Grid>
                   </Grid>
