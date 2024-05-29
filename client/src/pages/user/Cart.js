@@ -29,6 +29,7 @@ function Cart() {
   const [fullname, setFullname] = useState("");
   const [contact, setContact] = useState("");
   // const [totalAmount, setTotalAmount] = useState(0);
+  const [decrementDisabled, setDecrementDisabled] = useState(false);
 
   const [newCart, setNewCart] = useState([]);
 
@@ -153,7 +154,6 @@ function Cart() {
       cartItems.map((item) => {
         // id === item.id ? { ...item, item.quantity + 1)  } : item;
         if (id === item.id) {
-          console.log(item.quantity);
           if (item.quantity === 2) {
             setDecrementDisabled(true);
           }
