@@ -46,6 +46,7 @@ function Product() {
   const [totalSale, setTotalSale] = useState("0");
   const [latestTrans, setLatesTrans] = useState([]);
   const [statusFil, setStatusFil] = useState("");
+  const [mainTotal, setMainTotal] = useState("");
   const [open, setOpen] = useState(false);
 
   // data table
@@ -242,9 +243,41 @@ function Product() {
     setOpen(true);
   };
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetch("https://gymerls-staging-server.vercel.app/api/transactions")
+        .then((response) => response.json())
+        .then((data) => {
+          setTransaction(data);
+          const stats = data.filter((data) => data.status === "Completed");
+          const n = dayjs(new Date());
+          const date = n.format();
+          const [sYear, sMonth, sDay] = date.split("-");
+          let dateNumber = Number(sDay.slice(0, 2)) - 1;
+          const complete = data.filter(
+            (trans) =>
+              trans.transaction_date.slice(0, 10) ===
+              date.slice(0, 8) + dateNumber
+          );
+          let t = 0;
+          stats.map(({ total }) => (t = t + total));
+          setMainTotal(t);
+          setTotalSale(t);
+          if (complete.length == 0) {
+            setTableHasNoData(true);
+          } else {
+            setTableHasNoData(false);
+            setFilteredList(complete);
+          }
+        });
+
+      setIsLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
   const filterByStatus = (event) => {
-    setTotalSale("0");
     setStatusFil(event.target.value);
+
     const results = transaction.filter((trans) => {
       if (event.target.value === "All") return transaction;
       return trans.status
@@ -254,6 +287,11 @@ function Product() {
     if (results.length === 0) {
       setTableHasNoData(true);
     } else setTableHasNoData(false);
+    if (event.target.value != "All" && event.target.value != "Completed") {
+      setTotalSale("0");
+    } else {
+      setTotalSale(mainTotal);
+    }
     setFilteredList(results);
   };
 
@@ -296,38 +334,6 @@ function Product() {
       }).catch((error) => console.log(error));
     });
   };
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetch("https://gymerls-staging-server.vercel.app/api/transactions")
-        .then((response) => response.json())
-        .then((data) => {
-          setTransaction(data);
-          const stats = data.filter((data) => data.status === "Completed");
-          const n = dayjs(new Date());
-          const date = n.format();
-          const [sYear, sMonth, sDay] = date.split("-");
-          let dateNumber = Number(sDay.slice(0, 2)) - 1;
-          const complete = stats.filter(
-            (trans) =>
-              trans.transaction_date.slice(0, 10) ===
-              date.slice(0, 8) + dateNumber
-          );
-          let t = 0;
-          complete.map(({ total }) => (t = t + total));
-          setTotalSale(t);
-          if (complete.length == 0) {
-            setTableHasNoData(true);
-          } else {
-            setTableHasNoData(false);
-            setFilteredList(complete);
-          }
-        });
-      setIsLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   const totalSales = () => {
     setStatusFil("");
@@ -525,7 +531,7 @@ function Product() {
                   sx={{ width: "30%" }}
                   value={startDate}
                   onChange={(newValue) => {
-                    setTotalSale("0");
+                    // setTotalSale("0");
                     setStatusFil("");
                     filteredByDate(newValue);
                     setStartDate(newValue);
@@ -543,7 +549,7 @@ function Product() {
                   value={endDate}
                   onChange={(newValue) => {
                     setStatusFil("");
-                    setTotalSale("0");
+                    // setTotalSale("0");
                     setEndDate(newValue);
                   }}
                   renderInput={(params) => <TextField {...params} />}
@@ -568,7 +574,7 @@ function Product() {
               <TextField
                 label="Search name"
                 onChange={(e) => {
-                  setTotalSale("0");
+                  // setTotalSale("0");
                   setStatusFil("");
                   filterBySearch(e);
                 }}
@@ -580,6 +586,7 @@ function Product() {
                   Status
                 </InputLabel>
                 <Select
+                  defaultValue="All"
                   labelId="demo-controlled-open-select-label"
                   id="demo-controlled-open-select"
                   open={open}
@@ -589,12 +596,12 @@ function Product() {
                   label="Status"
                   onChange={filterByStatus}
                 >
-                  <MenuItem value=""></MenuItem>
+                  {/* <MenuItem value=""></MenuItem> */}
                   <MenuItem sx={{ color: "" }} value={"All"}>
                     All
                   </MenuItem>
                   <MenuItem sx={{ color: "#ed6c02" }} value={"Pending"}>
-                    {"Pending"}
+                    Pending
                   </MenuItem>
                   <MenuItem sx={{ color: "#2e7d32" }} value={"Completed"}>
                     Completed

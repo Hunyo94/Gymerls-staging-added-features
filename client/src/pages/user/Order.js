@@ -64,6 +64,7 @@ function Product() {
       )
         .then((response) => response.json())
         .then((data) => {
+          console.log(data);
           setTransaction(data);
           if (data.length === 0) {
             setTableHasNoData(true);

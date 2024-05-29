@@ -36,7 +36,7 @@ function Cart() {
 
   const [grandTotal, setGrandTotal] = useState(0);
   const [totalQuantity, setTotalQuantity] = useState(0);
-
+  const [decrementDisabled, setDecrementDisabled] = useState(false);
   // DIALOG BOX - CHECKOUT
   const [open, setOpen] = useState(false);
 
@@ -60,7 +60,11 @@ function Cart() {
         setCart(result);
         objectLength(result);
         findSumUsingReduce(result);
-
+        result.map((item) => {
+          if (item.quantity === 1) {
+            setDecrementDisabled(true);
+          }
+        });
         let t = 0;
         result.map(({ sub_total }) => (t = t + sub_total));
 
@@ -113,6 +117,9 @@ function Cart() {
 
     setCart((cartItems) =>
       cartItems.map((item) => {
+        if (item.quantity === 1) {
+          setDecrementDisabled(false);
+        }
         if (id === item.id) {
           item.quantity++;
           item.sub_total = item.quantity * item.price;
@@ -146,6 +153,10 @@ function Cart() {
       cartItems.map((item) => {
         // id === item.id ? { ...item, item.quantity + 1)  } : item;
         if (id === item.id) {
+          console.log(item.quantity);
+          if (item.quantity === 2) {
+            setDecrementDisabled(true);
+          }
           item.quantity--;
           item.sub_total = item.quantity * item.price;
         }
@@ -267,6 +278,7 @@ function Cart() {
         })
           .then((res) => res.json())
           .then((result) => {
+            console.log(result);
             userLog(localStorage.getItem("username"), "Confirm", "checkout");
             Swal.fire({
               title: "Transaction is successful!",
@@ -567,7 +579,10 @@ function Cart() {
                           alignItems={"center"}
                           justifyContent={"center"}
                         >
-                          <Button onClick={() => decrementQuantity(item.id)}>
+                          <Button
+                            disabled={decrementDisabled}
+                            onClick={() => decrementQuantity(item.id)}
+                          >
                             -
                           </Button>
                           <Typography>{item.quantity}</Typography>
