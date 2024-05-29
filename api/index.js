@@ -633,13 +633,14 @@ app.post("/api/get-cart-by-id", (req, res) => {
 
 // TRANSACTION
 app.post("/api/transaction", async (req, res) => {
-  const sql = `INSERT INTO transaction (username, fullname, contact, method, address, items, total, status, receipt_url, transaction_date) VALUES (
+  const sql = `INSERT INTO transaction (username, fullname, contact, method, address, items, total_quantity, total, status, receipt_url, transaction_date) VALUES (
     '${req.body.username}',
     '${req.body.fullname}',
     '${req.body.contact}',
     '${req.body.method}',
     '${req.body.address}',
     '${req.body.items}',
+    '${req.body.total_quantity}',
     '${req.body.total}',
     '${req.body.status}',
     '${req.body.receipt_url}',
