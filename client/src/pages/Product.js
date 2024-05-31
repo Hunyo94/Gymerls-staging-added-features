@@ -82,7 +82,7 @@ function Product() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetch("https://gymerls-staging-server.vercel.app/api/products")
+      fetch("http://localhost:3030/api/products")
         .then((response) => response.json())
         .then((data) => {
           setProducts(data);
@@ -161,7 +161,7 @@ function Product() {
     const addedDate = formatDate(new Date());
     const product_name = data.get("product_name");
     uploadImageToCloud(function (callback) {
-      fetch("https://gymerls-staging-server.vercel.app/api/create-product", {
+      fetch("http://localhost:3030/api/create-product", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -215,22 +215,19 @@ function Product() {
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          fetch(
-            "https://gymerls-staging-server.vercel.app/api/update-product",
-            {
-              method: "PATCH",
-              headers: {
-                "Content-type": "application/json",
-              },
-              body: JSON.stringify({
-                product_name: data.get("update_prod_name"),
-                image_url: callback,
-                description: data.get("update_description"),
-                price: data.get("update_price"),
-                id: prodId,
-              }),
-            }
-          )
+          fetch("http://localhost:3030/api/update-product", {
+            method: "PATCH",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+              product_name: data.get("update_prod_name"),
+              image_url: callback,
+              description: data.get("update_description"),
+              price: data.get("update_price"),
+              id: prodId,
+            }),
+          })
             .then((res) => res.json())
             .then((result) => {
               userLog(
@@ -280,7 +277,7 @@ function Product() {
     setProdId(id);
     setImageFieldVisibility(false);
 
-    fetch("https://gymerls-staging-server.vercel.app/api/get-product-by-id", {
+    fetch("http://localhost:3030/api/get-product-by-id", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -321,7 +318,7 @@ function Product() {
 
   const userLog = (author, action, event, product) => {
     getIpAddress(function (callback) {
-      fetch("https://gymerls-staging-server.vercel.app/api/insert-log", {
+      fetch("http://localhost:3030/api/insert-log", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -363,7 +360,7 @@ function Product() {
         );
 
         // DELETE IN PRODUCT
-        fetch("https://gymerls-staging-server.vercel.app/api/delete-product", {
+        fetch("http://localhost:3030/api/delete-product", {
           method: "PATCH",
           headers: {
             "Content-type": "application/json",

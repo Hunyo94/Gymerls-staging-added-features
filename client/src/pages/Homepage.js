@@ -33,7 +33,7 @@ function DrawerAppBar(props) {
   const [items, setItems] = useState([]);
   const [noItems, setNoItems] = useState(true);
   useEffect(() => {
-    fetch("https://gymerls-staging-server.vercel.app/api/top-products")
+    fetch("http://localhost:3030/api/top-products")
       .then((response) => response.json())
       .then((data) => {
         if (data.length === 0) {

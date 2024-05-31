@@ -108,13 +108,13 @@ function DrawerAppBar(props) {
         }
       });
     } else {
-      fetch("https://gymerls-staging-server.vercel.app/api/products")
+      fetch("http://localhost:3030/api/products")
         .then((response) => response.json())
         .then((data) => {
           setItems(data);
         });
 
-      fetch("https://gymerls-staging-server.vercel.app/api/get-cart-by-id", {
+      fetch("http://localhost:3030/api/get-cart-by-id", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -137,7 +137,7 @@ function DrawerAppBar(props) {
     setCartItemQuantity(cartItemQuantity + 1);
     setOpenSnackBar(true);
 
-    fetch("https://gymerls-staging-server.vercel.app/api/add-to-cart", {
+    fetch("http://localhost:3030/api/add-to-cart", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -161,7 +161,7 @@ function DrawerAppBar(props) {
   };
 
   const deleteCartItem = (id, product_name) => {
-    fetch("https://gymerls-staging-server.vercel.app/api/delete-cart", {
+    fetch("http://localhost:3030/api/delete-cart", {
       method: "PATCH",
       headers: {
         "Content-type": "application/json",
@@ -227,7 +227,7 @@ function DrawerAppBar(props) {
 
   const userLog = (author, action, event) => {
     getIpAddress(function (callback) {
-      fetch("https://gymerls-staging-server.vercel.app/api/insert-log", {
+      fetch("http://localhost:3030/api/insert-log", {
         method: "POST",
         headers: {
           "Content-type": "application/json",

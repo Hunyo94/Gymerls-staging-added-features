@@ -64,19 +64,19 @@ function Landing() {
 
     getCurrentUser(localStorage.getItem("username"));
 
-    fetch("https://gymerls-staging-server.vercel.app/api/all-user")
+    fetch("http://localhost:3030/api/all-user")
       .then((response) => response.json())
       .then((data) => {
         setUserCount(data.length);
       });
 
-    fetch("https://gymerls-staging-server.vercel.app/api/transactions")
+    fetch("http://localhost:3030/api/transactions")
       .then((response) => response.json())
       .then((data) => {
         setOrderCount(data.length);
       });
 
-    fetch("https://gymerls-staging-server.vercel.app/api/products")
+    fetch("http://localhost:3030/api/products")
       .then((response) => response.json())
       .then((data) => {
         setProductCount(data.length);
@@ -90,7 +90,7 @@ function Landing() {
   const userProfData = () => {
     const currentDate = formatDate(new Date());
     transactData(currentDate);
-    fetch("https://gymerls-staging-server.vercel.app/api/all-user-profile", {
+    fetch("http://localhost:3030/api/all-user-profile", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -122,7 +122,7 @@ function Landing() {
   };
 
   const transactData = (currentDate) => {
-    fetch("https://gymerls-staging-server.vercel.app/api/transactions")
+    fetch("http://localhost:3030/api/transactions")
       .then((response) => response.json())
       .then((data) => {
         if (data.length != 0) {
@@ -180,7 +180,7 @@ function Landing() {
     setLastBatch([]);
 
     fetch(
-      "https://gymerls-staging-server.vercel.app/api/get-reservation-by-date-and-status-is-confirmed",
+      "http://localhost:3030/api/get-reservation-by-date-and-status-is-confirmed",
       {
         method: "POST",
         headers: {

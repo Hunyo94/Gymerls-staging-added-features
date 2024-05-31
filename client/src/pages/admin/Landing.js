@@ -60,7 +60,7 @@ function Landing() {
 
     getCurrentUser(localStorage.getItem("username"));
 
-    fetch("https://gymerls-staging-server.vercel.app/api/get-user-by-role", {
+    fetch("http://localhost:3030/api/get-user-by-role", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -74,13 +74,13 @@ function Landing() {
         setUserCount(data.length);
       });
 
-    fetch("https://gymerls-staging-server.vercel.app/api/transactions")
+    fetch("http://localhost:3030/api/transactions")
       .then((response) => response.json())
       .then((data) => {
         setOrderCount(data.length);
       });
 
-    fetch("https://gymerls-staging-server.vercel.app/api/get-product", {
+    fetch("http://localhost:3030/api/get-product", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -132,7 +132,7 @@ function Landing() {
     setLastBatch([]);
 
     fetch(
-      "https://gymerls-staging-server.vercel.app/api/get-reservation-by-date-and-status-is-confirmed",
+      "http://localhost:3030/api/get-reservation-by-date-and-status-is-confirmed",
       {
         method: "POST",
         headers: {

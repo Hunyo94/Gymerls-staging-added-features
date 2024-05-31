@@ -23,18 +23,15 @@ export default function BasicDateCalendar() {
     setFirstBatch([]);
     setSecondBatch([]);
 
-    fetch(
-      "https://gymerls-staging-server.vercel.app/api/get-reservation-by-date",
-      {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          reservation_date: formattedDate,
-        }),
-      }
-    )
+    fetch("http://localhost:3030/api/get-reservation-by-date", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        reservation_date: formattedDate,
+      }),
+    })
       .then((res) => res.json())
       .then((data) => {
         for (let item of data) {

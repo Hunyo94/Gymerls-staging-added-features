@@ -124,7 +124,7 @@ function MealplantAuto() {
   };
 
   const handleCreateReadyMeal = () => {
-    fetch("https://gymerls-staging-server.vercel.app/api/create-ready-meals", {
+    fetch("http://localhost:3030/api/create-ready-meals", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -187,18 +187,15 @@ function MealplantAuto() {
         );
 
         // DELETE IN READY MEAL
-        fetch(
-          "https://gymerls-staging-server.vercel.app/api/delete-ready-meal",
-          {
-            method: "PATCH",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-              id: id,
-            }),
-          }
-        ).then((res) => res.json());
+        fetch("http://localhost:3030/api/delete-ready-meal", {
+          method: "PATCH",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            id: id,
+          }),
+        }).then((res) => res.json());
 
         Swal.fire({
           title: "User successfully deleted!",
@@ -241,18 +238,15 @@ function MealplantAuto() {
     setIsVisible(true);
 
     if (dietType.length >= 5) {
-      fetch(
-        "https://gymerls-staging-server.vercel.app/api/validate-diet-type",
-        {
-          method: "POST",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify({
-            diet_type: dietType,
-          }),
-        }
-      )
+      fetch("http://localhost:3030/api/validate-diet-type", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          diet_type: dietType,
+        }),
+      })
         .then((res) => res.json())
         .then((result) => {
           if (result.length === 0) {
@@ -272,18 +266,15 @@ function MealplantAuto() {
     setDietTypeIsValid(true);
     setIsVisible(true);
     if (diettype.length >= 5) {
-      fetch(
-        "https://gymerls-staging-server.vercel.app/api/validate-diet-type",
-        {
-          method: "POST",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify({
-            diet_type: diettype,
-          }),
-        }
-      )
+      fetch("http://localhost:3030/api/validate-diet-type", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          diet_type: diettype,
+        }),
+      })
         .then((res) => res.json())
         .then((result) => {
           if (result.length === 0) {
@@ -312,7 +303,7 @@ function MealplantAuto() {
   useEffect(() => {
     getReadyMealsDataToPopulateTable();
     const timer = setTimeout(() => {
-      fetch("https://gymerls-staging-server.vercel.app/api/get-user-by-role", {
+      fetch("http://localhost:3030/api/get-user-by-role", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -334,7 +325,7 @@ function MealplantAuto() {
 
   //get all data to populate table
   const getReadyMealsDataToPopulateTable = () => {
-    fetch("https://gymerls-staging-server.vercel.app/api/get-ready-meals")
+    fetch("http://localhost:3030/api/get-ready-meals")
       .then((response) => response.json())
       .then((data) => {
         setReadyMeals(data);
@@ -374,18 +365,15 @@ function MealplantAuto() {
 
   const getReadyMealsData = (id) => {
     handleClickOpenModalUpdateMeal();
-    fetch(
-      "https://gymerls-staging-server.vercel.app/api/get-ready-meals-by-id",
-      {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          id: id,
-        }),
-      }
-    )
+    fetch("http://localhost:3030/api/get-ready-meals-by-id", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        id: id,
+      }),
+    })
       .then((res) => res.json())
       .then((result) => {
         setReadyMealId(id);
@@ -447,43 +435,40 @@ function MealplantAuto() {
       allowOutsideClick: false,
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(
-          "https://gymerls-staging-server.vercel.app/api/update-ready-meal",
-          {
-            method: "PATCH",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-              bmi: data.get("bmi"),
-              diet_type: data.get("diet_type"),
-              descriptions: data.get("description"),
-              ready_sunday_breakfast: data.get("sunday_breakfast"),
-              ready_sunday_lunch: data.get("sunday_lunch"),
-              ready_sunday_dinner: data.get("sunday_dinner"),
-              ready_monday_breakfast: data.get("monday_breakfast"),
-              ready_monday_lunch: data.get("monday_lunch"),
-              ready_monday_dinner: data.get("monday_dinner"),
-              ready_tuesday_breakfast: data.get("tuesday_breakfast"),
-              ready_tuesday_lunch: data.get("tuesday_lunch"),
-              ready_tuesday_dinner: data.get("tuesday_dinner"),
-              ready_wednesday_breakfast: data.get("wednesday_breakfast"),
-              ready_wednesday_lunch: data.get("wednesday_lunch"),
-              ready_wednesday_dinner: data.get("wednesday_dinner"),
-              ready_thursday_breakfast: data.get("thursday_breakfast"),
-              ready_thursday_lunch: data.get("thursday_lunch"),
-              ready_thursday_dinner: data.get("thursday_dinner"),
-              ready_friday_breakfast: data.get("friday_breakfast"),
-              ready_friday_lunch: data.get("friday_lunch"),
-              ready_friday_dinner: data.get("friday_dinner"),
-              ready_saturday_breakfast: data.get("saturday_breakfast"),
-              ready_saturday_lunch: data.get("saturday_lunch"),
-              ready_saturday_dinner: data.get("saturday_dinner"),
-              added_by: localStorage.getItem("username"),
-              id: readyMealid,
-            }),
-          }
-        )
+        fetch("http://localhost:3030/api/update-ready-meal", {
+          method: "PATCH",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            bmi: data.get("bmi"),
+            diet_type: data.get("diet_type"),
+            descriptions: data.get("description"),
+            ready_sunday_breakfast: data.get("sunday_breakfast"),
+            ready_sunday_lunch: data.get("sunday_lunch"),
+            ready_sunday_dinner: data.get("sunday_dinner"),
+            ready_monday_breakfast: data.get("monday_breakfast"),
+            ready_monday_lunch: data.get("monday_lunch"),
+            ready_monday_dinner: data.get("monday_dinner"),
+            ready_tuesday_breakfast: data.get("tuesday_breakfast"),
+            ready_tuesday_lunch: data.get("tuesday_lunch"),
+            ready_tuesday_dinner: data.get("tuesday_dinner"),
+            ready_wednesday_breakfast: data.get("wednesday_breakfast"),
+            ready_wednesday_lunch: data.get("wednesday_lunch"),
+            ready_wednesday_dinner: data.get("wednesday_dinner"),
+            ready_thursday_breakfast: data.get("thursday_breakfast"),
+            ready_thursday_lunch: data.get("thursday_lunch"),
+            ready_thursday_dinner: data.get("thursday_dinner"),
+            ready_friday_breakfast: data.get("friday_breakfast"),
+            ready_friday_lunch: data.get("friday_lunch"),
+            ready_friday_dinner: data.get("friday_dinner"),
+            ready_saturday_breakfast: data.get("saturday_breakfast"),
+            ready_saturday_lunch: data.get("saturday_lunch"),
+            ready_saturday_dinner: data.get("saturday_dinner"),
+            added_by: localStorage.getItem("username"),
+            id: readyMealid,
+          }),
+        })
           .then((res) => res.json())
           .then((result) => {
             mealPlanLog(
@@ -557,19 +542,16 @@ function MealplantAuto() {
   };
 
   const handleReadyMealStatus = (status, diet_type) => {
-    fetch(
-      "https://gymerls-staging-server.vercel.app/api/update-ready-meal-status",
-      {
-        method: "PATCH",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          status: status ? 1 : 0,
-          diet_type: diet_type,
-        }),
-      }
-    )
+    fetch("http://localhost:3030/api/update-ready-meal-status", {
+      method: "PATCH",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        status: status ? 1 : 0,
+        diet_type: diet_type,
+      }),
+    })
       .then((res) => res.json())
       .then((data) => {
         if (status === 1) {
@@ -610,7 +592,7 @@ function MealplantAuto() {
 
   const mealPlanLog = (author, action, event, type) => {
     getIpAddress(function (callback) {
-      fetch("https://gymerls-staging-server.vercel.app/api/insert-log", {
+      fetch("http://localhost:3030/api/insert-log", {
         method: "POST",
         headers: {
           "Content-type": "application/json",

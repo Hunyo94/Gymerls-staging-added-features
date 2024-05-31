@@ -85,22 +85,19 @@ function Membership() {
       allowOutsideClick: false,
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(
-          "https://gymerls-staging-server.vercel.app/api/create-membership",
-          {
-            method: "POST",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-              name: data.get("membership"),
-              description: descriptions,
-              price: price,
-              status: 1,
-              created_by: localStorage.getItem("username"),
-            }),
-          }
-        )
+        fetch("http://localhost:3030/api/create-membership", {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            name: data.get("membership"),
+            description: descriptions,
+            price: price,
+            status: 1,
+            created_by: localStorage.getItem("username"),
+          }),
+        })
           .then((res) => res.json())
           .then((result) => {
             handleReadyMealLogs(name);
@@ -132,18 +129,15 @@ function Membership() {
         );
 
         // DELETE IN READY MEAL
-        fetch(
-          "https://gymerls-staging-server.vercel.app/api/delete-membership",
-          {
-            method: "PATCH",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-              id: id,
-            }),
-          }
-        ).then((res) => res.json());
+        fetch("http://localhost:3030/api/delete-membership", {
+          method: "PATCH",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            id: id,
+          }),
+        }).then((res) => res.json());
 
         Swal.fire({
           title: "Membership successfully deleted!",
@@ -184,7 +178,7 @@ function Membership() {
   useEffect(() => {
     const timer = setTimeout(() => {
       // getMembershipDataToPopulateTable();
-      fetch("https://gymerls-staging-server.vercel.app/api/get-user-by-role", {
+      fetch("http://localhost:3030/api/get-user-by-role", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -201,7 +195,7 @@ function Membership() {
           }
         });
 
-      fetch("https://gymerls-staging-server.vercel.app/api/get-membership")
+      fetch("http://localhost:3030/api/get-membership")
         .then((response) => response.json())
         .then((data) => {
           if (data.length !== 0) {
@@ -219,18 +213,15 @@ function Membership() {
   const getMembershipData = (id) => {
     setMembershipId(id);
     handleClickOpenModalUpdateMeal();
-    fetch(
-      "https://gymerls-staging-server.vercel.app/api/get-membership-by-id",
-      {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          id: id,
-        }),
-      }
-    )
+    fetch("http://localhost:3030/api/get-membership-by-id", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        id: id,
+      }),
+    })
       .then((res) => res.json())
       .then((result) => {
         for (let item of result) {
@@ -268,21 +259,18 @@ function Membership() {
       allowOutsideClick: false,
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(
-          "https://gymerls-staging-server.vercel.app/api/update-membership",
-          {
-            method: "PATCH",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-              name: data.get("membership"),
-              description: data.get("description"),
-              price: data.get("price"),
-              id: membershipId,
-            }),
-          }
-        )
+        fetch("http://localhost:3030/api/update-membership", {
+          method: "PATCH",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            name: data.get("membership"),
+            description: data.get("description"),
+            price: data.get("price"),
+            id: membershipId,
+          }),
+        })
           .then((res) => res.json())
           .then((result) => {
             subscriptionLog(
@@ -334,19 +322,16 @@ function Membership() {
   };
 
   const handleMembershipStatus = (status, id, name) => {
-    fetch(
-      "https://gymerls-staging-server.vercel.app/api/update-membership-status",
-      {
-        method: "PATCH",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          status: status ? 1 : 0,
-          id: id,
-        }),
-      }
-    )
+    fetch("http://localhost:3030/api/update-membership-status", {
+      method: "PATCH",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        status: status ? 1 : 0,
+        id: id,
+      }),
+    })
       .then((res) => res.json())
       .then((data) => {
         if (status === 1) {
@@ -386,7 +371,7 @@ function Membership() {
 
   const subscriptionLog = (author, action, event, type) => {
     getIpAddress(function (callback) {
-      fetch("https://gymerls-staging-server.vercel.app/api/insert-log", {
+      fetch("http://localhost:3030/api/insert-log", {
         method: "POST",
         headers: {
           "Content-type": "application/json",

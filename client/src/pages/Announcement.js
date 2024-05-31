@@ -64,9 +64,7 @@ function Announcement() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetch(
-        "https://gymerls-staging-server.vercel.app/api/get-all-announcement"
-      )
+      fetch("http://localhost:3030/api/get-all-announcement")
         .then((response) => response.json())
         .then((data) => {
           setAnnouncement(data);
@@ -158,18 +156,15 @@ function Announcement() {
   const [updateEventTime, setUpdateEventTime] = useState("");
 
   const getAnnouncementById = (id) => {
-    fetch(
-      "https://gymerls-staging-server.vercel.app/api/get-announcement-by-id",
-      {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          id: id,
-        }),
-      }
-    )
+    fetch("http://localhost:3030/api/get-announcement-by-id", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        id: id,
+      }),
+    })
       .then((res) => res.json())
       .then((result) => {
         setUpdateTitle(result[0].title);
@@ -222,22 +217,19 @@ function Announcement() {
       allowOutsideClick: false,
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(
-          "https://gymerls-staging-server.vercel.app/api/update-announcement",
-          {
-            method: "PATCH",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-              title: updateTitle,
-              description: updateDescription,
-              event_date: updateEventDate,
-              event_time: updateEventTime,
-              id: selectedUserId,
-            }),
-          }
-        )
+        fetch("http://localhost:3030/api/update-announcement", {
+          method: "PATCH",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            title: updateTitle,
+            description: updateDescription,
+            event_date: updateEventDate,
+            event_time: updateEventTime,
+            id: selectedUserId,
+          }),
+        })
           .then((res) => res.json())
           .then((result) => {
             userLog(localStorage.getItem("username"), "Update", "announcement");
@@ -263,7 +255,7 @@ function Announcement() {
     setIsBtnLoading(true);
     const data = new FormData(e.currentTarget);
 
-    fetch("https://gymerls-staging-server.vercel.app/api/create-announcement", {
+    fetch("http://localhost:3030/api/create-announcement", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -308,18 +300,15 @@ function Announcement() {
         userLog(localStorage.getItem("username"), "Delete", "announcement");
 
         // DELETE IN ANNOUNCEMENT TABLE
-        fetch(
-          "https://gymerls-staging-server.vercel.app/api/delete-announcement",
-          {
-            method: "PATCH",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-              id: id,
-            }),
-          }
-        ).then((res) => res.json());
+        fetch("http://localhost:3030/api/delete-announcement", {
+          method: "PATCH",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            id: id,
+          }),
+        }).then((res) => res.json());
 
         Swal.fire({
           title: "Announcement successfully deleted!",
@@ -344,7 +333,7 @@ function Announcement() {
 
   const userLog = (author, action, event) => {
     getIpAddress(function (callback) {
-      fetch("https://gymerls-staging-server.vercel.app/api/insert-log", {
+      fetch("http://localhost:3030/api/insert-log", {
         method: "POST",
         headers: {
           "Content-type": "application/json",

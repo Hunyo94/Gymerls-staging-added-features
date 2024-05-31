@@ -87,19 +87,16 @@ function Landing() {
   };
 
   const getAllSchedule = (user) => {
-    fetch(
-      "https://gymerls-staging-server.vercel.app/api/get-reservation-by-username-and-date",
-      {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          username: user,
-          reservation_date: formatDateYearFirst(new Date()),
-        }),
-      }
-    )
+    fetch("http://localhost:3030/api/get-reservation-by-username-and-date", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        username: user,
+        reservation_date: formatDateYearFirst(new Date()),
+      }),
+    })
       .then((response) => response.json())
       .then((data) => {
         setTodaySchedules(data);
@@ -113,18 +110,15 @@ function Landing() {
 
   const [currentUserMembership, setCurrentUserMembership] = useState("");
   const getCurrentUserInfo = (user) => {
-    fetch(
-      "https://gymerls-staging-server.vercel.app/api/get-user-by-username",
-      {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          username: user,
-        }),
-      }
-    )
+    fetch("http://localhost:3030/api/get-user-by-username", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        username: user,
+      }),
+    })
       .then((response) => response.json())
       .then((data) => {
         setCurrentUserMembership(data[0].membership_type);
@@ -147,7 +141,7 @@ function Landing() {
   };
 
   const getMealPlan = (user, day) => {
-    fetch("https://gymerls-staging-server.vercel.app/api/meal-plan", {
+    fetch("http://localhost:3030/api/meal-plan", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -202,18 +196,15 @@ function Landing() {
 
   useEffect(() => {
     getAnnouncement();
-    fetch(
-      "https://gymerls-staging-server.vercel.app/api/get-user-by-username",
-      {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          username: localStorage.getItem("username"),
-        }),
-      }
-    )
+    fetch("http://localhost:3030/api/get-user-by-username", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        username: localStorage.getItem("username"),
+      }),
+    })
       .then((res) => res.json())
       .then((result) => {
         getDaysDifference(result[0].mem_end_date);
@@ -239,15 +230,12 @@ function Landing() {
 
   const [announcements, setAnnouncements] = useState([]);
   const getAnnouncement = () => {
-    fetch(
-      "https://gymerls-staging-server.vercel.app/api/get-all-announcement",
-      {
-        method: "GET",
-        headers: {
-          "Content-type": "application/json",
-        },
-      }
-    )
+    fetch("http://localhost:3030/api/get-all-announcement", {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json",
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         setAnnouncements(data);
@@ -277,7 +265,7 @@ function Landing() {
     setLastBatch([]);
 
     fetch(
-      "https://gymerls-staging-server.vercel.app/api/get-reservation-by-date-and-status-is-confirmed",
+      "http://localhost:3030/api/get-reservation-by-date-and-status-is-confirmed",
       {
         method: "POST",
         headers: {
