@@ -148,17 +148,20 @@ function Product() {
       if (result.isConfirmed) {
         if (imageFieldVisible) {
           uploadImageToCloud(function (callback) {
-            fetch("http://localhost:3030/api/update-transaction", {
-              method: "PATCH",
-              headers: {
-                "Content-type": "application/json",
-              },
-              body: JSON.stringify({
-                status: status,
-                receipt_url: imageFieldVisible ? callback : "image.jpg",
-                id: userId,
-              }),
-            })
+            fetch(
+              "https://gymerls-staging-server.vercel.app/api/update-transaction",
+              {
+                method: "PATCH",
+                headers: {
+                  "Content-type": "application/json",
+                },
+                body: JSON.stringify({
+                  status: status,
+                  receipt_url: imageFieldVisible ? callback : "image.jpg",
+                  id: userId,
+                }),
+              }
+            )
               .then((res) => res.json())
               .then((result) => {
                 userLog(
@@ -181,17 +184,20 @@ function Product() {
               });
           });
         } else {
-          fetch("http://localhost:3030/api/update-transaction", {
-            method: "PATCH",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-              status: status,
-              receipt_url: "image.jpg",
-              id: userId,
-            }),
-          })
+          fetch(
+            "https://gymerls-staging-server.vercel.app/api/update-transaction",
+            {
+              method: "PATCH",
+              headers: {
+                "Content-type": "application/json",
+              },
+              body: JSON.stringify({
+                status: status,
+                receipt_url: "image.jpg",
+                id: userId,
+              }),
+            }
+          )
             .then((res) => res.json())
             .then((result) => {
               userLog(
@@ -239,7 +245,7 @@ function Product() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetch("http://localhost:3030/api/transactions")
+      fetch("https://gymerls-staging-server.vercel.app/api/transactions")
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
@@ -319,7 +325,7 @@ function Product() {
 
   const userLog = (author, action, event, status) => {
     getIpAddress(function (callback) {
-      fetch("http://localhost:3030/api/insert-log", {
+      fetch("https://gymerls-staging-server.vercel.app/api/insert-log", {
         method: "POST",
         headers: {
           "Content-type": "application/json",

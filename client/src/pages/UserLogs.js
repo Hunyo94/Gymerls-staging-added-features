@@ -48,7 +48,7 @@ function UserLogs() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetch("http://localhost:3030/api/get-all-logs")
+      fetch("https://gymerls-staging-server.vercel.app/api/get-all-logs")
         .then((response) => response.json())
         .then((data) => {
           setuserLogs(data);

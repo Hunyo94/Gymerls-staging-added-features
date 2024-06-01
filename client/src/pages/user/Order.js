@@ -50,15 +50,18 @@ function Product() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetch("http://localhost:3030/api/get-transaction-by-username", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          username: localStorage.getItem("username"),
-        }),
-      })
+      fetch(
+        "https://gymerls-staging-server.vercel.app/api/get-transaction-by-username",
+        {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            username: localStorage.getItem("username"),
+          }),
+        }
+      )
         .then((response) => response.json())
         .then((data) => {
           console.log(data);

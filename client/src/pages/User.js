@@ -214,7 +214,7 @@ function User() {
   };
 
   const populateRoleInput = () => {
-    fetch("http://localhost:3030/api/roles")
+    fetch("https://gymerls-staging-server.vercel.app/api/roles")
       .then((response) => response.json())
       .then((data) => {
         const newData = data.filter((object) => {
@@ -238,7 +238,7 @@ function User() {
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          fetch("http://localhost:3030/api/register", {
+          fetch("https://gymerls-staging-server.vercel.app/api/register", {
             method: "POST",
             headers: {
               "Content-type": "application/json",
@@ -306,7 +306,7 @@ function User() {
     setcreateButtonIsDisabled(true);
     setIsVisible(true);
     if (username.length >= 5) {
-      fetch("http://localhost:3030/api/validate-user", {
+      fetch("https://gymerls-staging-server.vercel.app/api/validate-user", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -335,7 +335,7 @@ function User() {
     const formattedStartDate = formatDate(startDate);
     const formattedEndDate = formatDate(endDate);
 
-    fetch("http://localhost:3030/api/create-user-profile", {
+    fetch("https://gymerls-staging-server.vercel.app/api/create-user-profile", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -384,7 +384,7 @@ function User() {
     handleSubscription();
     handleExpiration();
     const timer = setTimeout(() => {
-      fetch("http://localhost:3030/api/users")
+      fetch("https://gymerls-staging-server.vercel.app/api/users")
         .then((response) => response.json())
         .then((data) => {
           setFilteredList(data);
@@ -426,7 +426,7 @@ function User() {
   };
 
   const handleSubscription = () => {
-    fetch("http://localhost:3030/api/get-membership")
+    fetch("https://gymerls-staging-server.vercel.app/api/get-membership")
       .then((response) => response.json())
       .then((data) => {
         let memData = [];
@@ -451,15 +451,18 @@ function User() {
 
   const handleClickOpenModalUpdate = (user_name) => {
     setOpenModalUpdate(true);
-    fetch("http://localhost:3030/api/get-user-by-username", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        username: user_name,
-      }),
-    })
+    fetch(
+      "https://gymerls-staging-server.vercel.app/api/get-user-by-username",
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          username: user_name,
+        }),
+      }
+    )
       .then((res) => res.json())
       .then((result) => {
         const pesoFormat = new Intl.NumberFormat("fil-PH", {
@@ -515,7 +518,7 @@ function User() {
       allowOutsideClick: false,
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch("http://localhost:3030/api/update-user", {
+        fetch("https://gymerls-staging-server.vercel.app/api/update-user", {
           method: "PATCH",
           headers: {
             "Content-type": "application/json",
@@ -659,15 +662,18 @@ function User() {
   };
 
   const handleGetDataByBmi = (bmiGet) => {
-    fetch("http://localhost:3030/api/get-ready-meal-by-bmi", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        bmi: bmiGet,
-      }),
-    })
+    fetch(
+      "https://gymerls-staging-server.vercel.app/api/get-ready-meal-by-bmi",
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          bmi: bmiGet,
+        }),
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         setRecommendedMeals(data);
@@ -685,15 +691,18 @@ function User() {
     setMealPlanUser(username);
     setOpenModalMealPlanning(true);
 
-    fetch("http://localhost:3030/api/get-user-by-username", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        username: username,
-      }),
-    })
+    fetch(
+      "https://gymerls-staging-server.vercel.app/api/get-user-by-username",
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username,
+        }),
+      }
+    )
       .then((res) => res.json())
       .then((result) => {
         for (let item of result) {
@@ -708,7 +717,7 @@ function User() {
         }
       });
 
-    fetch("http://localhost:3030/api/meal-plan", {
+    fetch("https://gymerls-staging-server.vercel.app/api/meal-plan", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -794,38 +803,41 @@ function User() {
 
     setIsBtnLoading(true);
 
-    fetch("http://localhost:3030/api/create-meal-planning", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        username: mealPlanUser,
-        diet_type: data.get("diet_type"),
-        calories: data.get("total_calories"),
-        sun_bf_meal: data.get("sunday_breakfast"),
-        sun_lunch_meal: data.get("sunday_lunch"),
-        sun_dinner_meal: data.get("sunday_dinner"),
-        mon_bf_meal: data.get("monday_breakfast"),
-        mon_lunch_meal: data.get("monday_lunch"),
-        mon_dinner_meal: data.get("monday_dinner"),
-        tue_bf_meal: data.get("tuesday_breakfast"),
-        tue_lunch_meal: data.get("tuesday_lunch"),
-        tue_dinner_meal: data.get("tuesday_dinner"),
-        wed_bf_meal: data.get("wednesday_breakfast"),
-        wed_lunch_meal: data.get("wednesday_lunch"),
-        wed_dinner_meal: data.get("wednesday_dinner"),
-        thurs_bf_meal: data.get("thursday_breakfast"),
-        thurs_lunch_meal: data.get("thursday_lunch"),
-        thurs_dinner_meal: data.get("thursday_dinner"),
-        fri_bf_meal: data.get("friday_breakfast"),
-        fri_lunch_meal: data.get("friday_lunch"),
-        fri_dinner_meal: data.get("friday_dinner"),
-        sat_bf_meal: data.get("saturday_breakfast"),
-        sat_lunch_meal: data.get("saturday_lunch"),
-        sat_dinner_meal: data.get("saturday_dinner"),
-      }),
-    })
+    fetch(
+      "https://gymerls-staging-server.vercel.app/api/create-meal-planning",
+      {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          username: mealPlanUser,
+          diet_type: data.get("diet_type"),
+          calories: data.get("total_calories"),
+          sun_bf_meal: data.get("sunday_breakfast"),
+          sun_lunch_meal: data.get("sunday_lunch"),
+          sun_dinner_meal: data.get("sunday_dinner"),
+          mon_bf_meal: data.get("monday_breakfast"),
+          mon_lunch_meal: data.get("monday_lunch"),
+          mon_dinner_meal: data.get("monday_dinner"),
+          tue_bf_meal: data.get("tuesday_breakfast"),
+          tue_lunch_meal: data.get("tuesday_lunch"),
+          tue_dinner_meal: data.get("tuesday_dinner"),
+          wed_bf_meal: data.get("wednesday_breakfast"),
+          wed_lunch_meal: data.get("wednesday_lunch"),
+          wed_dinner_meal: data.get("wednesday_dinner"),
+          thurs_bf_meal: data.get("thursday_breakfast"),
+          thurs_lunch_meal: data.get("thursday_lunch"),
+          thurs_dinner_meal: data.get("thursday_dinner"),
+          fri_bf_meal: data.get("friday_breakfast"),
+          fri_lunch_meal: data.get("friday_lunch"),
+          fri_dinner_meal: data.get("friday_dinner"),
+          sat_bf_meal: data.get("saturday_breakfast"),
+          sat_lunch_meal: data.get("saturday_lunch"),
+          sat_dinner_meal: data.get("saturday_dinner"),
+        }),
+      }
+    )
       .then((res) => res.json())
       .then((result) => {
         userLog(
@@ -878,38 +890,41 @@ function User() {
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          fetch("http://localhost:3030/api/update-meal-planning", {
-            method: "PATCH",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-              diet_type: data.get("diet_type"),
-              calories: data.get("total_calories"),
-              sun_bf_meal: data.get("sunday_breakfast"),
-              sun_lunch_meal: data.get("sunday_lunch"),
-              sun_dinner_meal: data.get("sunday_dinner"),
-              mon_bf_meal: data.get("monday_breakfast"),
-              mon_lunch_meal: data.get("monday_lunch"),
-              mon_dinner_meal: data.get("monday_dinner"),
-              tue_bf_meal: data.get("tuesday_breakfast"),
-              tue_lunch_meal: data.get("tuesday_lunch"),
-              tue_dinner_meal: data.get("tuesday_dinner"),
-              wed_bf_meal: data.get("wednesday_breakfast"),
-              wed_lunch_meal: data.get("wednesday_lunch"),
-              wed_dinner_meal: data.get("wednesday_dinner"),
-              thurs_bf_meal: data.get("thursday_breakfast"),
-              thurs_lunch_meal: data.get("thursday_lunch"),
-              thurs_dinner_meal: data.get("thursday_dinner"),
-              fri_bf_meal: data.get("friday_breakfast"),
-              fri_lunch_meal: data.get("friday_lunch"),
-              fri_dinner_meal: data.get("friday_dinner"),
-              sat_bf_meal: data.get("saturday_breakfast"),
-              sat_lunch_meal: data.get("saturday_lunch"),
-              sat_dinner_meal: data.get("saturday_dinner"),
-              username: mealPlanUser,
-            }),
-          })
+          fetch(
+            "https://gymerls-staging-server.vercel.app/api/update-meal-planning",
+            {
+              method: "PATCH",
+              headers: {
+                "Content-type": "application/json",
+              },
+              body: JSON.stringify({
+                diet_type: data.get("diet_type"),
+                calories: data.get("total_calories"),
+                sun_bf_meal: data.get("sunday_breakfast"),
+                sun_lunch_meal: data.get("sunday_lunch"),
+                sun_dinner_meal: data.get("sunday_dinner"),
+                mon_bf_meal: data.get("monday_breakfast"),
+                mon_lunch_meal: data.get("monday_lunch"),
+                mon_dinner_meal: data.get("monday_dinner"),
+                tue_bf_meal: data.get("tuesday_breakfast"),
+                tue_lunch_meal: data.get("tuesday_lunch"),
+                tue_dinner_meal: data.get("tuesday_dinner"),
+                wed_bf_meal: data.get("wednesday_breakfast"),
+                wed_lunch_meal: data.get("wednesday_lunch"),
+                wed_dinner_meal: data.get("wednesday_dinner"),
+                thurs_bf_meal: data.get("thursday_breakfast"),
+                thurs_lunch_meal: data.get("thursday_lunch"),
+                thurs_dinner_meal: data.get("thursday_dinner"),
+                fri_bf_meal: data.get("friday_breakfast"),
+                fri_lunch_meal: data.get("friday_lunch"),
+                fri_dinner_meal: data.get("friday_dinner"),
+                sat_bf_meal: data.get("saturday_breakfast"),
+                sat_lunch_meal: data.get("saturday_lunch"),
+                sat_dinner_meal: data.get("saturday_dinner"),
+                username: mealPlanUser,
+              }),
+            }
+          )
             .then((res) => res.json())
             .then((result) => {
               userLog(
@@ -958,7 +973,7 @@ function User() {
       allowOutsideClick: false,
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch("http://localhost:3030/api/update-password", {
+        fetch("https://gymerls-staging-server.vercel.app/api/update-password", {
           method: "PATCH",
           headers: {
             "Content-type": "application/json",
@@ -1014,7 +1029,7 @@ function User() {
   };
 
   const handleExpiration = () => {
-    fetch("http://localhost:3030/api/all-user-profile", {
+    fetch("https://gymerls-staging-server.vercel.app/api/all-user-profile", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -1042,32 +1057,38 @@ function User() {
     //the final no. of days (result)
     // setMembershipEnd(result);
     if (1 > result) {
-      fetch("http://localhost:3030/api/update-user-status", {
-        method: "PATCH",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          isActive: 0,
-          username: username,
-        }),
-      });
+      fetch(
+        "https://gymerls-staging-server.vercel.app/api/update-user-status",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            isActive: 0,
+            username: username,
+          }),
+        }
+      );
     } else {
-      fetch("http://localhost:3030/api/update-user-status", {
-        method: "PATCH",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          isActive: 1,
-          username: username,
-        }),
-      });
+      fetch(
+        "https://gymerls-staging-server.vercel.app/api/update-user-status",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            isActive: 1,
+            username: username,
+          }),
+        }
+      );
     }
   };
 
   const handleUserStatus = (status, username) => {
-    fetch("http://localhost:3030/api/update-user-status", {
+    fetch("https://gymerls-staging-server.vercel.app/api/update-user-status", {
       method: "PATCH",
       headers: {
         "Content-type": "application/json",
@@ -1126,7 +1147,7 @@ function User() {
         );
 
         // DELETE IN USERS TABLE
-        fetch("http://localhost:3030/api/delete-user", {
+        fetch("https://gymerls-staging-server.vercel.app/api/delete-user", {
           method: "PATCH",
           headers: {
             "Content-type": "application/json",
@@ -1137,59 +1158,74 @@ function User() {
         }).then((res) => res.json());
 
         // DELETE IN USER_PROFILE TABLE
-        fetch("http://localhost:3030/api/delete-user-profile", {
-          method: "PATCH",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify({
-            username: username,
-          }),
-        }).then((res) => res.json());
+        fetch(
+          "https://gymerls-staging-server.vercel.app/api/delete-user-profile",
+          {
+            method: "PATCH",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+              username: username,
+            }),
+          }
+        ).then((res) => res.json());
 
         // DELETE IN MEAL_PLAN TABLE
-        fetch("http://localhost:3030/api/delete-user-meal-plan", {
-          method: "PATCH",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify({
-            username: username,
-          }),
-        }).then((res) => res.json());
+        fetch(
+          "https://gymerls-staging-server.vercel.app/api/delete-user-meal-plan",
+          {
+            method: "PATCH",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+              username: username,
+            }),
+          }
+        ).then((res) => res.json());
 
         // DELETE IN TRANSACTION TABLE
-        fetch("http://localhost:3030/api/delete-user-transaction", {
-          method: "PATCH",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify({
-            username: username,
-          }),
-        }).then((res) => res.json());
+        fetch(
+          "https://gymerls-staging-server.vercel.app/api/delete-user-transaction",
+          {
+            method: "PATCH",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+              username: username,
+            }),
+          }
+        ).then((res) => res.json());
 
         // DELETE IN RESERVATION TABLE
-        fetch("http://localhost:3030/api/delete-user-reservation", {
-          method: "PATCH",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify({
-            username: username,
-          }),
-        }).then((res) => res.json());
+        fetch(
+          "https://gymerls-staging-server.vercel.app/api/delete-user-reservation",
+          {
+            method: "PATCH",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+              username: username,
+            }),
+          }
+        ).then((res) => res.json());
 
         // DELETE IN CART TABLE
-        fetch("http://localhost:3030/api/delete-user-cart", {
-          method: "PATCH",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify({
-            username: username,
-          }),
-        }).then((res) => res.json());
+        fetch(
+          "https://gymerls-staging-server.vercel.app/api/delete-user-cart",
+          {
+            method: "PATCH",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+              username: username,
+            }),
+          }
+        ).then((res) => res.json());
 
         Swal.fire({
           title: "User successfully deleted!",
@@ -1214,7 +1250,7 @@ function User() {
 
   const userLog = (author, action, event, user) => {
     getIpAddress(function (callback) {
-      fetch("http://localhost:3030/api/insert-log", {
+      fetch("https://gymerls-staging-server.vercel.app/api/insert-log", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
