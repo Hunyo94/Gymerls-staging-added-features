@@ -821,6 +821,17 @@ app.post("/api/get-reservation-by-username", (req, res) => {
   });
 });
 
+// GET All RESERVATION
+app.post("/api/get-reservation-all", (req, res) => {
+  const sql = `SELECT * FROM reservation`;
+  db.query(sql, (err, data) => {
+    if (err) {
+      return res.json(err.message);
+    }
+    return res.json(data);
+  });
+});
+
 // GET RESERVATION BY USERNAME
 app.post("/api/get-reservation-by-username-date-status", (req, res) => {
   const sql = `SELECT * FROM reservation WHERE username = "${req.body.username}" AND reservation_date = "${req.body.reservation_date}" AND status = "${req.body.status}"`;

@@ -244,6 +244,7 @@ function Product() {
         .then((data) => {
           console.log(data);
           setTransaction(data);
+
           const stats = data.filter((data) => data.status === "Completed");
           const statsNew = data.filter((data) => data.status === "Pending");
           setFilteredList(statsNew);

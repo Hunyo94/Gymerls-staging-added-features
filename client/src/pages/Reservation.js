@@ -182,6 +182,7 @@ function Reservation() {
   const [updateUsername, setUpdateUsername] = useState("");
   const [updateResDate, setUpdateResDate] = useState("");
   const [updateResNotes, setUpdateResNotes] = useState("");
+  const [updateResDateForSelected, setUpdateResDateForSelected] = useState("");
   const [updateSelectedTimeSlot, setUpdateSelectedTimeSlot] = useState("");
   const [updateCoachName, setUpdateCoachName] = useState("");
   const [updateResStatus, setUpdateResStatus] = useState("");
@@ -203,9 +204,12 @@ function Reservation() {
     })
       .then((res) => res.json())
       .then((data) => {
+        const utcDate = dayjs(data[0].reservation_date);
+        const formattedDateStssr = utcDate.format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
         setUpdateUsername(data[0].username);
         setUpdateResNotes(data[0].notes);
-        setUpdateResDate(data[0].reservation_date);
+        setUpdateResDateForSelected(utcDate);
+        setUpdateResDate(formattedDateStssr);
         setUpdateResStatus(data[0].status);
         setUpdateSelectedTimeSlot(data[0].time_slot);
         setUpdateCoachName(data[0].coach_name);
@@ -315,7 +319,8 @@ function Reservation() {
   useEffect(() => {
     const timer = setTimeout(() => {
       var formattedDate = formatDate(new Date());
-      fetch("http://localhost:3030/api/get-reservation-by-date", {
+      // fetch("http://localhost:3030/api/get-reservation-by-date", {
+      fetch("http://localhost:3030/api/get-reservation-all", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -751,7 +756,7 @@ function Reservation() {
     setSelectedUpdateTimeSlot("");
     setUpdateSelectedTimeSlot("");
 
-    let selectMonth = selectedUpdateDate.slice(8, 11);
+    let selectMonth = updateResDateForSelected.toString().slice(8, 11);
     let month = newDate.slice(8, 11);
 
     let currentMonth = "";
@@ -814,14 +819,43 @@ function Reservation() {
   const handleUpdateReservation = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    var currentDate = new Date();
+    let selectMonths = updateResDateForSelected
+      .toString()
+      .slice(8, 11)
+      .toString();
+    let selectDate = "";
+    if (selectMonths === "Jan") {
+      selectDate = 1;
+    } else if (selectMonths === "Feb") {
+      selectDate = 2;
+    } else if (selectMonths === "Mar") {
+      selectDate = 3;
+    } else if (selectMonths === "Apr") {
+      selectDate = 4;
+    } else if (selectMonths === "May") {
+      selectDate = 5;
+    } else if (selectMonths === "Jun") {
+      selectDate = 6;
+    } else if (selectMonths === "Jul") {
+      selectDate = 7;
+    } else if (selectMonths === "Aug") {
+      selectDate = 8;
+    } else if (selectMonths === "Sep") {
+      selectDate = 9;
+    } else if (selectMonths === "Oct") {
+      selectDate = 10;
+    } else if (selectMonths === "Nov") {
+      selectDate = 11;
+    } else if (selectMonths === "Dec") {
+      selectDate = 12;
+    }
 
     let monthNow =
       newDate.slice(0, 8) + thisMonthUpdate + newDate.slice(11, 16);
     let selectMonth =
-      selectedUpdateDate.slice(0, 8) +
-      selectedMonthUpdate +
-      selectedUpdateDate.slice(11, 16);
+      updateResDateForSelected.toString().slice(0, 8) +
+      selectDate +
+      updateResDateForSelected.toString().slice(11, 16);
 
     const n = selectMonth.slice(5, 7);
     const m = Number(n);
@@ -850,7 +884,7 @@ function Reservation() {
     // YEAR VALIDAION
     if (selectMonth.slice(10, 16) >= monthNow.slice(10, 16)) {
       // MONTH VALIDATION
-      if (selectedMonthUpdate == thisMonthUpdate) {
+      if (selectDate == thisMonthUpdate) {
         // DAY VALIDATION
         if (selectedDay == dayNow) {
           // HOUR VALIDATION
@@ -871,7 +905,7 @@ function Reservation() {
                     "Content-type": "application/json",
                   },
                   body: JSON.stringify({
-                    reservation_date: formatDate(updateResDate),
+                    reservation_date: formatDate(updateResDateForSelected),
                     notes: updateResNotes,
                     time_slot: updateSelectedTimeSlot,
                     coach_name: updateCoachName,
@@ -931,7 +965,7 @@ function Reservation() {
                   "Content-type": "application/json",
                 },
                 body: JSON.stringify({
-                  reservation_date: formatDate(updateResDate),
+                  reservation_date: formatDate(updateResDateForSelected),
                   notes: updateResNotes,
                   time_slot: updateSelectedTimeSlot,
                   coach_name: updateCoachName,
@@ -974,7 +1008,7 @@ function Reservation() {
             allowOutsideClick: false,
           });
         }
-      } else if (selectedMonthUpdate > thisMonthUpdate) {
+      } else if (selectDate > thisMonthUpdate) {
         Swal.fire({
           icon: "info",
           title: "Are you sure you want to update this reservation?",
@@ -991,7 +1025,7 @@ function Reservation() {
                 "Content-type": "application/json",
               },
               body: JSON.stringify({
-                reservation_date: formatDate(updateResDate),
+                reservation_date: formatDate(updateResDateForSelected),
                 notes: updateResNotes,
                 time_slot: updateSelectedTimeSlot,
                 coach_name: updateCoachName,
@@ -1282,7 +1316,7 @@ function Reservation() {
                       onChange={(newValue) => {
                         setGetThisUpdateDate(newValue);
                         handleMonthsUpdate();
-                        setUpdateResDate(newValue);
+                        setUpdateResDateForSelected(newValue);
                         getReservationByDate(newValue);
                       }}
                       required
