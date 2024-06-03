@@ -627,7 +627,7 @@ function Product() {
                             </TableCell>
                             <TableCell>{prod.product_name}</TableCell>
                             <TableCell>{prod.description}</TableCell>
-                            <TableCell>{prod.price}</TableCell>
+                            <TableCell>{"₱" + prod.price}</TableCell>
                             <TableCell>{formatDate(prod.added_date)}</TableCell>
                             <TableCell align="center">
                               <Button
@@ -696,7 +696,7 @@ function Product() {
                           >
                             <TableCell>{prod.product_name}</TableCell>
                             <TableCell>{prod.description}</TableCell>
-                            <TableCell>{prod.price}</TableCell>
+                            <TableCell>{"₱" + prod.price}</TableCell>
                             <TableCell>{formatDate(prod.added_date)}</TableCell>
                           </StyledTableRow>
                         );

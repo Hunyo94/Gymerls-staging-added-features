@@ -122,6 +122,7 @@ export default function MiniDrawer() {
 
   useEffect(() => {
     const role = localStorage.getItem("role");
+    
     validateRole(role);
   });
 

@@ -63,6 +63,7 @@ function Product() {
   const [userId, setUserId] = useState(0);
   const [uploadFile, setUploadFile] = useState("");
   const [status, setStatus] = useState("");
+  const [filteredList, setFilteredList] = new useState(latestTrans);
 
   const paymentStatus = [
     {
@@ -223,8 +224,6 @@ function Product() {
     });
   };
 
-  const [filteredList, setFilteredList] = new useState(latestTrans);
-
   const filterBySearch = (e) => {
     const results = transaction.filter((trans) => {
       if (e.target.value === "") return transaction;
@@ -248,12 +247,15 @@ function Product() {
       fetch("https://gymerls-staging-server.vercel.app/api/transactions")
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           setTransaction(data);
-
+          setFilteredList(data);
+          if (data.length === 0) {
+            setTableHasNoData(true);
+          } else {
+            setTableHasNoData(false);
+          }
           const stats = data.filter((data) => data.status === "Completed");
-          const statsNew = data.filter((data) => data.status === "Pending");
-          setFilteredList(statsNew);
+          // const statsNew = data.filter((data) => data.status === "Pending");
           const n = dayjs(new Date());
           const date = n.format();
           const [sYear, sMonth, sDay] = date.split("-");
@@ -267,13 +269,7 @@ function Product() {
           stats.map(({ total }) => (t = t + total));
           setMainTotal(t);
 
-          // setTotalSale(t;
-          if (complete.length == 0) {
-            setTableHasNoData(true);
-          } else {
-            setTableHasNoData(false);
-            // setFilteredList(complete);
-          }
+          setTotalSale(t);
         });
 
       setIsLoading(false);
@@ -673,7 +669,7 @@ function Product() {
                             <TableCell>{trans.items}</TableCell>
                             <TableCell>{trans.method}</TableCell>
                             <TableCell>{trans.total_quantity}</TableCell>
-                            <TableCell>{trans.total}</TableCell>
+                            <TableCell>{"₱" + trans.total}</TableCell>
                             <TableCell>
                               {formatDate(trans.transaction_date)}
                             </TableCell>

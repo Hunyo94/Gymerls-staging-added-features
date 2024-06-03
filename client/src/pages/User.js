@@ -200,12 +200,7 @@ function User() {
     setHeight(0);
     setWeight(0);
     setOpen(false);
-  };
-
-  const handleCloseUpdateModal = () => {
-    setBmiMessage("");
-    setBmiValue("");
-    setOpenModalUpdate(false);
+    setPrice(0);
   };
 
   // GENDER
@@ -253,6 +248,8 @@ function User() {
           })
             .then((res) => res.json())
             .then((result) => {
+              setHeight(0);
+              setWeight(0);
               createUserProfile();
               userLog(
                 localStorage.getItem("username"),
@@ -383,25 +380,36 @@ function User() {
     const currentDate = formatDate(new Date());
     handleSubscription();
     handleExpiration();
+
+    if (membershipType === "Monthly" || membershipType === "Premium") {
+      setStartDate(dayjs(new Date()));
+      const startDd = dayjs(new Date());
+      const updatedDate = dayjs(startDd).add(1, "month");
+      setEndtDate(updatedDate);
+    } else {
+      setStartDate(null);
+      setEndtDate(null);
+    }
+
     const timer = setTimeout(() => {
+      setHeight(0);
+      setWeight(0);
       fetch("https://gymerls-staging-server.vercel.app/api/users")
         .then((response) => response.json())
         .then((data) => {
           setFilteredList(data);
           setUsers(data);
           setIsLoading(false);
-          if (data.length != 0) {
+          if (data.length !== 0) {
             var monthlyPrice = data.filter(
               (e) =>
                 e.date_added.slice(0, 4) >= currentDate.slice(0, 4) &&
                 e.date_added.slice(5, 7) === currentDate.slice(5, 7)
             );
             let t = 0;
-            {
-              monthlyPrice.map((e) => {
-                t = t + e.price;
-              });
-            }
+            monthlyPrice.map((e) => {
+              t = t + e.price;
+            });
             setTotalSale(t);
             setFilteredList(monthlyPrice);
             setTableHasNoData(false);
@@ -411,7 +419,7 @@ function User() {
         });
     }, 1000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [membershipType]);
 
   const handlePriceMembership = (e) => {
     for (let item of membership)
@@ -473,7 +481,7 @@ function User() {
         const bdate = formatDate(result[0].birthdate);
         const startDate = formatDate(result[0].mem_start_date);
         const endDate = formatDate(result[0].mem_end_date);
-
+        setPrice(pesoFormat);
         setFullname(result[0].name);
         setUpdateBirthdate(bdate);
         setAge(result[0].age);
@@ -549,6 +557,9 @@ function User() {
         })
           .then((res) => res.json())
           .then((result) => {
+            setPrice(0);
+            setHeight(0);
+            setWeight(0);
             userLog(
               localStorage.getItem("username"),
               "Update",
@@ -1392,7 +1403,17 @@ function User() {
     style: "currency",
     currency: "PHP",
   }).format(totalSale);
-
+  const handleCloseUpdateModal = () => {
+    setBmiMessage("");
+    setBmiValue("");
+    setOpenModalUpdate(false);
+    setPrice(0);
+    setHeight("");
+    setWeight("");
+    setMembershipPrice("");
+    setAge("");
+    setMembershipType("");
+  };
   return (
     <>
       {isLoading ? (
@@ -1820,7 +1841,6 @@ function User() {
                       handlePriceMembership(e.target.value);
                       setMembershipType(e.target.value);
                     }}
-                    defaultValue={"Monthly"}
                     helperText="Please select membership"
                   >
                     {membership.map((option) => (
@@ -1846,7 +1866,6 @@ function User() {
                     onChange={(e) => {
                       setMembershipPrice(e.target.value);
                     }}
-                    defaultValue={"Monthly"}
                   ></TextField>
                 </Grid>
               </Grid>
@@ -1860,6 +1879,15 @@ function User() {
                       value={startDate}
                       onChange={(newValue) => {
                         setStartDate(newValue);
+                        if (
+                          membershipType === "Monthly" ||
+                          membershipType === "Premium"
+                        ) {
+                          setEndtDate(newValue);
+                          const startDd = newValue;
+                          const updatedDate = dayjs(startDd).add(1, "month");
+                          setEndtDate(updatedDate);
+                        }
                       }}
                       renderInput={(params) => <TextField {...params} />}
                     />
@@ -2206,7 +2234,6 @@ function User() {
                         handlePriceMembership(e.target.value);
                         setMembershipType(e.target.value);
                       }}
-                      defaultValue={"Monthly"}
                       helperText="Please select membership"
                     >
                       {membership.map((option) => (
@@ -2230,7 +2257,6 @@ function User() {
                       onChange={(e) => {
                         setMembershipPrice(e.target.value);
                       }}
-                      defaultValue={"Monthly"}
                     ></TextField>
                   </Grid>
                 </Grid>
@@ -2244,6 +2270,14 @@ function User() {
                         value={dayjs(updateStartDate)}
                         onChange={(newValue) => {
                           setUpdateStartDate(newValue);
+                          if (
+                            membershipType === "Monthly" ||
+                            membershipType === "Premium"
+                          ) {
+                            const startDd = newValue;
+                            const updatedDate = dayjs(startDd).add(1, "month");
+                            setUpdateEndDate(updatedDate);
+                          }
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />

@@ -55,7 +55,7 @@ function User() {
   const [roles, setRoles] = useState([]);
   const [height, setHeight] = useState(0);
   const [weight, setWeight] = useState(0);
-  const [selectedRole, setSelectedRole] = useState("");
+  const [selectedRole, setSelectedRole] = useState("user");
   const [birthdate, setBirthdate] = useState(null);
   const [age, setAge] = useState(0);
   const [gender, setGender] = useState("Male");
@@ -194,18 +194,13 @@ function User() {
   };
 
   const handleCloseUpdateModal = () => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      showCancelButton: true,
-      confirmButtonText: "Yes",
-      cancelButtonText: "No",
-      allowOutsideClick: false,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setOpenModalUpdate(false);
-      }
-    });
+    setOpenModalUpdate(false);
+
+    setAge("");
+    setHeight("");
+    setWeight("");
+    setMembershipPrice("");
+    setMembershipType("");
   };
 
   // GENDER
@@ -220,6 +215,7 @@ function User() {
         const newData = data.filter((object) => {
           return object.id === 4;
         });
+        console.log(newData);
         setRoles(newData);
       });
   };
@@ -269,9 +265,10 @@ function User() {
                 setOpen(false);
                 setIsLoading(true);
                 window.location.reload(false);
-                setAge(0);
-                setHeight(0);
-                setWeight(0);
+                setAge("");
+                setHeight("");
+                setWeight("");
+                setPrice("");
               });
             });
         } else {
@@ -368,6 +365,17 @@ function User() {
 
   useEffect(() => {
     handleSubscription();
+
+    if (membershipType === "Monthly" || membershipType === "Premium") {
+      setStartDate(dayjs(new Date()));
+      const startDd = dayjs(new Date());
+      const updatedDate = dayjs(startDd).add(1, "month");
+      setEndtDate(updatedDate);
+    } else {
+      setStartDate(null);
+      setEndtDate(null);
+    }
+
     const timer = setTimeout(() => {
       fetch("https://gymerls-staging-server.vercel.app/api/get-user-by-role", {
         method: "POST",
@@ -392,7 +400,7 @@ function User() {
         });
     }, 1000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [membershipType]);
 
   const handlePriceMembership = (e) => {
     for (let item of membership)
@@ -416,7 +424,12 @@ function User() {
             memData.push(item);
           }
         }
-        setMembershipData(memData);
+        console.log(memData);
+        const newMemDta = data.filter((object) => {
+          return object.name !== "admin";
+        });
+        // console.log(newMemDta);
+        setMembershipData(newMemDta);
       });
   };
 
@@ -457,7 +470,7 @@ function User() {
         const bdate = formatDate(result[0].birthdate);
         const startDate = formatDate(result[0].mem_start_date);
         const endDate = formatDate(result[0].mem_end_date);
-
+        setPrice(pesoFormat);
         setFullname(result[0].name);
         setUpdateBirthdate(bdate);
         setAge(result[0].age);
@@ -1223,7 +1236,7 @@ function User() {
                     fullWidth
                     margin="normal"
                     label="Role"
-                    value={selectedRole}
+                    value={"user"}
                     onChange={(e) => {
                       setSelectedRole(e.target.value);
                     }}
@@ -1541,6 +1554,15 @@ function User() {
                       value={startDate}
                       onChange={(newValue) => {
                         setStartDate(newValue);
+                        if (
+                          membershipType === "Monthly" ||
+                          membershipType === "Premium"
+                        ) {
+                          setEndtDate(newValue);
+                          const startDd = newValue;
+                          const updatedDate = dayjs(startDd).add(1, "month");
+                          setEndtDate(updatedDate);
+                        }
                       }}
                       renderInput={(params) => <TextField {...params} />}
                     />
@@ -1676,7 +1698,7 @@ function User() {
                 </Grid>
 
                 <Grid container spacing={2}>
-                  <Grid xs={4}>
+                  <Grid item xs={4}>
                     <TextField
                       id="contact"
                       label="Contact no."
@@ -1699,6 +1721,7 @@ function User() {
                     }}
                   >
                     <TextField
+                      required
                       InputProps={{
                         endAdornment: (
                           <InputAdornment
@@ -1731,6 +1754,7 @@ function User() {
                     }}
                   >
                     <TextField
+                      required
                       InputProps={{
                         endAdornment: (
                           <InputAdornment
@@ -1924,6 +1948,14 @@ function User() {
                         value={dayjs(updateStartDate)}
                         onChange={(newValue) => {
                           setUpdateStartDate(newValue);
+                          if (
+                            membershipType === "Monthly" ||
+                            membershipType === "Premium"
+                          ) {
+                            const startDd = newValue;
+                            const updatedDate = dayjs(startDd).add(1, "month");
+                            setUpdateEndDate(updatedDate);
+                          }
                         }}
                         renderInput={(params) => <TextField {...params} />}
                       />

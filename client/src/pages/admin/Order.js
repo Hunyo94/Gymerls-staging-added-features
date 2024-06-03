@@ -515,7 +515,7 @@ function Product() {
                             <TableCell>{trans.items}</TableCell>
                             <TableCell>{trans.method}</TableCell>
                             <TableCell>{trans.total_quantity}</TableCell>
-                            <TableCell>{trans.total}</TableCell>
+                            <TableCell>{"₱" + trans.total}</TableCell>
                             <TableCell>
                               {formatDate(trans.transaction_date)}
                             </TableCell>

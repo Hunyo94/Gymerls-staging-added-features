@@ -670,7 +670,7 @@ function Product() {
                             </TableCell>
                             <TableCell>{prod.product_name}</TableCell>
                             <TableCell>{prod.description}</TableCell>
-                            <TableCell>{prod.price}</TableCell>
+                            <TableCell>{"₱" + prod.price}</TableCell>
                             <TableCell>{prod.added_by}</TableCell>
                             <TableCell>{formatDate(prod.added_date)}</TableCell>
                             <TableCell align="center">
@@ -755,7 +755,7 @@ function Product() {
                           >
                             <TableCell>{prod.product_name}</TableCell>
                             <TableCell>{prod.description}</TableCell>
-                            <TableCell>{prod.price}</TableCell>
+                            <TableCell>{"₱" + prod.price}</TableCell>
                             <TableCell>{prod.added_by}</TableCell>
                             <TableCell>{formatDate(prod.added_date)}</TableCell>
                           </StyledTableRow>
