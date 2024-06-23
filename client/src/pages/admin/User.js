@@ -24,6 +24,7 @@ import {
   Backdrop,
   Switch,
   InputLabel,
+  FormControlLabel,
   InputAdornment,
 } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -166,6 +167,8 @@ function User() {
   const [typeDiet, setTypeDiet] = useState("");
   const [totalCalories, setTotalCalories] = useState("");
 
+  const [minAgeAlert, setMinAgeAlert] = useState(true);
+
   // data table
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -187,6 +190,7 @@ function User() {
   };
 
   const handleClose = () => {
+    setMinAgeAlert(true);
     setOpen(false);
     setAge(0);
     setHeight(0);
@@ -1323,6 +1327,15 @@ function User() {
                   sx={{ width: "100%" }}
                   value={birthdate}
                   onChange={(newValue) => {
+                    // setBirthdate(newValue);
+                    // const formatBdate = formatDate(newValue);
+                    // dayjs.extend(relativeTime);
+
+                    // var newDate = dayjs(formatBdate).fromNow(true);
+
+                    // let firstWord = newDate.split(" ")[0];
+                    // var age = parseFloat(firstWord);
+                    // setAge(age);
                     setBirthdate(newValue);
                     const formatBdate = formatDate(newValue);
                     dayjs.extend(relativeTime);
@@ -1330,8 +1343,13 @@ function User() {
                     var newDate = dayjs(formatBdate).fromNow(true);
 
                     let firstWord = newDate.split(" ")[0];
-                    var age = parseFloat(firstWord);
-                    setAge(age);
+                    var ages = parseFloat(firstWord);
+                    if (17 <= ages) {
+                      setMinAgeAlert(true);
+                    } else {
+                      setMinAgeAlert(false);
+                    }
+                    setAge(ages);
                   }}
                   renderInput={(params) => <TextField {...params} />}
                 />
@@ -1344,6 +1362,7 @@ function User() {
                     margin="normal"
                     type="number"
                     value={age}
+                    helperText="Minimum age is 17 and above"
                     onChange={(e) => {
                       setAge(e.target.value);
                     }}
@@ -1351,35 +1370,93 @@ function User() {
                     disabled
                     fullWidth
                   />
+                  {minAgeAlert ? (
+                    <Typography
+                      variant="caption"
+                      margin="normal"
+                      hidden={true}
+                      sx={{ fontSize: "0.8rem", color: "green" }}
+                    ></Typography>
+                  ) : (
+                    <Typography
+                      variant="caption"
+                      margin="normal"
+                      sx={{ fontSize: "0.8rem", color: "#ae1919" }}
+                    >
+                      Minimum age should be 17 an above
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid
                   item
                   xs={6}
                   sx={{
                     display: "flex",
+                    justifyContent: "space-around",
                     alignItems: "center",
-                    justifyContent: "center",
                   }}
                 >
-                  <div sx={{ color: "#a4a4a4" }}>{"Gender:"}</div>
-                  <Radio
-                    checked={gender === "Male"}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      flexDirection: "column",
+                    }}
+                  >
+                    {"Gender:"}
+                  </div>
+                  <Grid item sx={{ display: "flex", flexDirection: "column" }}>
+                    <FormControlLabel
+                      value="top"
+                      control={
+                        <Radio
+                        color="default"
+                          value="Male"
+                          checked={gender === "Male"}
+                          name="radio-buttons"
+                          onChange={handleChangeGender}
+                        />
+                      }
+                      label="Male"
+                      labelPlacement="right"
+                    />
+                    <FormControlLabel
+                      value="top"
+                      control={
+                        <Radio
+                          color="default"
+                          value="Female"
+                          checked={gender === "Female"}
+                          name="radio-buttons"
+                          onChange={handleChangeGender}
+                        />
+                      }
+                      label="Female"
+                      labelPlacement="right"
+                    />
+                  </Grid>
+                  {/* <Radio
+                         checked={gender === "Male"}
                     onChange={handleChangeGender}
                     value="Male"
                     name="radio-buttons"
-                  />
-                  <Radio
+                    label="Male"
+                    labelP
+                  /> */}
+                  {/* <Radio
                     checked={gender === "Female"}
                     onChange={handleChangeGender}
                     value="Female"
                     name="radio-buttons"
-                    sx={{
-                      color: "pink",
-                      "&.Mui-checked": {
-                        color: "pink",
-                      },
-                    }}
-                  />
+                    sx={
+                      {
+                        // color: "pink",
+                        // "&.Mui-checked": {
+                        //   color: "pink",
+                        // },
+                      }
+                    }
+                  /> */}
                 </Grid>
               </Grid>
               <TextField
@@ -1666,34 +1743,59 @@ function User() {
                       fullWidth
                     />
                   </Grid>
+                 
                   <Grid
                     item
                     xs={4}
                     sx={{
                       display: "flex",
+                      justifyContent: "space-around",
                       alignItems: "center",
-                      justifyContent: "center",
                     }}
                   >
-                    <div sx={{ color: "#a4a4a4" }}>{"Gender:"}</div>
-                    <Radio
-                      checked={gender === "Male"}
-                      onChange={handleChangeGender}
-                      value="Male"
-                      name="radio-buttons"
-                    />
-                    <Radio
-                      checked={gender === "Female"}
-                      onChange={handleChangeGender}
-                      value="Female"
-                      name="radio-buttons"
-                      sx={{
-                        color: "pink",
-                        "&.Mui-checked": {
-                          color: "pink",
-                        },
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        flexDirection: "column",
                       }}
-                    />
+                    >
+                      {"Gender:"}
+                    </div>
+                    <Grid
+                      item
+                      sx={{ display: "flex", flexDirection: "column" }}
+                    >
+                      <FormControlLabel
+                        value="top"
+                        control={
+                          <Radio
+                            color="default"
+                            value="Male"
+                            checked={gender === "Male"}
+                            name="radio-buttons"
+                            onChange={handleChangeGender}
+                          />
+                        }
+                        label="Male"
+                        labelPlacement="right"
+                      />
+                      <FormControlLabel
+                        value="top"
+                        control={
+                          <Radio
+                          color="default"
+
+                            value="Female"
+                            checked={gender === "Female"}
+                            name="radio-buttons"
+                            onChange={handleChangeGender}
+                          />
+                        }
+                        label="Female"
+                        labelPlacement="right"
+                      />
+                    </Grid>
                   </Grid>
                 </Grid>
 
