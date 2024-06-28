@@ -226,7 +226,7 @@ function User() {
 
   const createUser = (e) => {
     e.preventDefault();
-    if (height != 0 && weight != 0) {
+    if (height != 0 && weight != 0 && minAgeAlert == true) {
       Swal.fire({
         icon: "info",
         title: "Are you sure you want to create new account?",
@@ -1410,7 +1410,7 @@ function User() {
                       value="top"
                       control={
                         <Radio
-                        color="default"
+                          color="default"
                           value="Male"
                           checked={gender === "Male"}
                           name="radio-buttons"
@@ -1743,7 +1743,7 @@ function User() {
                       fullWidth
                     />
                   </Grid>
-                 
+
                   <Grid
                     item
                     xs={4}
@@ -1784,8 +1784,7 @@ function User() {
                         value="top"
                         control={
                           <Radio
-                          color="default"
-
+                            color="default"
                             value="Female"
                             checked={gender === "Female"}
                             name="radio-buttons"

@@ -383,6 +383,8 @@ function User() {
   };
 
   useEffect(() => {
+    // setHeight(0);
+    // setWeight(0);
     const currentDate = formatDate(new Date());
     handleSubscription();
     handleExpiration();
@@ -398,8 +400,6 @@ function User() {
     }
 
     const timer = setTimeout(() => {
-      setHeight(0);
-      setWeight(0);
       fetch("https://gymerls-staging-server.vercel.app/api/users")
         .then((response) => response.json())
         .then((data) => {
@@ -2060,7 +2060,7 @@ function User() {
                       fullWidth
                     />
                   </Grid>
-                  
+
                   <Grid
                     item
                     xs={4}
@@ -2101,8 +2101,7 @@ function User() {
                         value="top"
                         control={
                           <Radio
-                          color="default"
-
+                            color="default"
                             value="Female"
                             checked={gender === "Female"}
                             name="radio-buttons"
