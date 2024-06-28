@@ -32,7 +32,7 @@ var db = mysql.createPool({
   connectionLimit: 10,
   host: "mysql-176444-0.cloudclusters.net",
   user: "admin",
-  password: "nEEArVS",
+  password: "nEEArVSF",
   database: "gymerls_db",
   port: "15828",
 });
