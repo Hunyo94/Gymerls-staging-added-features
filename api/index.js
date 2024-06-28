@@ -30,11 +30,11 @@ app.use(express.json());
 // LIVE ENV
 var db = mysql.createPool({
   connectionLimit: 10,
-  host: "mysql-176444-0.cloudclusters.net",
+  host: "mysql-176968-0.cloudclusters.net",
   user: "admin",
-  password: "nEEArVS",
+  password: "0fsBhhh4",
   database: "gymerls_db",
-  port: "15828",
+  port: "10009",
 });
 
 app.get("/", function (req, res) {
