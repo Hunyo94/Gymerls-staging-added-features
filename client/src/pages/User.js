@@ -95,6 +95,7 @@ function User() {
   const [passwordButton, setPasswordButton] = useState(false);
 
   const [createButtonIsDisabled, setcreateButtonIsDisabled] = useState(true);
+  const [adminRole, setAdminRole] = useState(true);
 
   const [membership, setMembershipData] = useState();
   const [membershipPrice, setMembershipPrice] = useState([]);
@@ -1420,6 +1421,13 @@ function User() {
     setAge("");
     setMembershipType("");
   };
+
+  const changeRole = (value) => {
+    if (value == "admin") {
+      setAdminRole(false);
+    } else setAdminRole(true);
+  };
+
   return (
     <>
       {isLoading ? (
@@ -1570,6 +1578,7 @@ function User() {
                     value={selectedRole}
                     onChange={(e) => {
                       setSelectedRole(e.target.value);
+                      changeRole(e.target.value);
                     }}
                     defaultValue={"user"}
                     helperText="Please select role"
@@ -1800,100 +1809,107 @@ function User() {
                 }}
               />
               <Divider />
-              <Typography sx={{ marginTop: "1rem" }} variant="h6">
-                Medical information
-              </Typography>
-              <TextField
-                id="medical_conditions"
-                label="Medical conditions"
-                margin="normal"
-                fullWidth
-                multiline
-                rows={2}
-                onChange={(e) => {
-                  setMedicalConditions(e.target.value);
-                }}
-              />
-              <TextField
-                id="allergies"
-                label="Allergies"
-                margin="normal"
-                fullWidth
-                multiline
-                rows={2}
-                onChange={(e) => {
-                  setAllergies(e.target.value);
-                }}
-              />
-              <TextField
-                id="current_medications"
-                label="Current medications"
-                margin="normal"
-                fullWidth
-                multiline
-                rows={2}
-                onChange={(e) => {
-                  setCurrentMedication(e.target.value);
-                }}
-              />
-              <TextField
-                id="doctor_name"
-                label="Doctor's name"
-                margin="normal"
-                onChange={(e) => {
-                  setFamilyDoctor(e.target.value);
-                }}
-                required
-                fullWidth
-              />
-              <TextField
-                sx={{ marginBottom: "1rem" }}
-                id="doctor_contact"
-                label="Contact no."
-                margin="normal"
-                onChange={(e) => {
-                  setDoctorContact(e.target.value);
-                }}
-                required
-                fullWidth
-              />
-              <Divider />
-              <Typography sx={{ marginTop: "1rem" }} variant="h6">
-                In case of emergency
-              </Typography>
-              <TextField
-                id="parent_name"
-                label="Parent's name"
-                margin="normal"
-                onChange={(e) => {
-                  setParentName(e.target.value);
-                }}
-                required
-                fullWidth
-              />
-              <TextField
-                id="parent_contact"
-                label="Contact no."
-                margin="normal"
-                onChange={(e) => {
-                  setParentContact(e.target.value);
-                }}
-                required
-                fullWidth
-              />
-              <TextField
-                id="parent_address"
-                label="Address"
-                margin="normal"
-                fullWidth
-                multiline
-                rows={2}
-                sx={{ marginBottom: "1rem" }}
-                onChange={(e) => {
-                  setParentAddress(e.target.value);
-                }}
-              />
-              <Divider />
+              {adminRole ? (
+                <Container style={{ display: "", padding: 0 }}>
+                  <Typography sx={{ marginTop: "1rem" }} variant="h6">
+                    Medical information
+                  </Typography>
+                  <TextField
+                    id="medical_conditions"
+                    label="Medical conditions"
+                    margin="normal"
+                    fullWidth
+                    multiline
+                    rows={2}
+                    onChange={(e) => {
+                      setMedicalConditions(e.target.value);
+                    }}
+                  />
+                  <TextField
+                    id="allergies"
+                    label="Allergies"
+                    margin="normal"
+                    fullWidth
+                    multiline
+                    rows={2}
+                    onChange={(e) => {
+                      setAllergies(e.target.value);
+                    }}
+                  />
+                  <TextField
+                    id="current_medications"
+                    label="Current medications"
+                    margin="normal"
+                    fullWidth
+                    multiline
+                    rows={2}
+                    onChange={(e) => {
+                      setCurrentMedication(e.target.value);
+                    }}
+                  />
+                  <TextField
+                    id="doctor_name"
+                    label="Doctor's name"
+                    margin="normal"
+                    onChange={(e) => {
+                      setFamilyDoctor(e.target.value);
+                    }}
+                    required
+                    fullWidth
+                  />
+                  <TextField
+                    sx={{ marginBottom: "1rem" }}
+                    id="doctor_contact"
+                    label="Contact no."
+                    margin="normal"
+                    onChange={(e) => {
+                      setDoctorContact(e.target.value);
+                    }}
+                    required
+                    fullWidth
+                  />
+                  <Divider />
+                  <Typography sx={{ marginTop: "1rem" }} variant="h6">
+                    In case of emergency
+                  </Typography>
+                  <TextField
+                    id="parent_name"
+                    label="Parent's name"
+                    margin="normal"
+                    onChange={(e) => {
+                      setParentName(e.target.value);
+                    }}
+                    required
+                    fullWidth
+                  />
+                  <TextField
+                    id="parent_contact"
+                    label="Contact no."
+                    margin="normal"
+                    onChange={(e) => {
+                      setParentContact(e.target.value);
+                    }}
+                    required
+                    fullWidth
+                  />
+                  <TextField
+                    id="parent_address"
+                    label="Address"
+                    margin="normal"
+                    fullWidth
+                    multiline
+                    rows={2}
+                    sx={{ marginBottom: "1rem" }}
+                    onChange={(e) => {
+                      setParentAddress(e.target.value);
+                    }}
+                  />
+                  <Divider />
+                </Container>
+              ) : (
+                <Typography variant="h1" color="initial"></Typography>
+              )}
+
               <Typography sx={{ marginTop: "1rem" }} variant="h6">
                 Membership
               </Typography>
@@ -2209,108 +2225,115 @@ function User() {
                   }}
                 />
                 <Divider />
-                <Typography sx={{ marginTop: "1rem" }} variant="h6">
-                  Medical information
-                </Typography>
-                <TextField
-                  id="medical_conditions"
-                  label="Medical conditions"
-                  margin="normal"
-                  fullWidth
-                  multiline
-                  rows={2}
-                  value={medicalConditions}
-                  onChange={(e) => {
-                    setMedicalConditions(e.target.value);
-                  }}
-                />
-                <TextField
-                  id="allergies"
-                  label="Allergies"
-                  margin="normal"
-                  fullWidth
-                  multiline
-                  value={allergies}
-                  rows={2}
-                  onChange={(e) => {
-                    setAllergies(e.target.value);
-                  }}
-                />
-                <TextField
-                  id="current_medications"
-                  label="Current medications"
-                  margin="normal"
-                  fullWidth
-                  multiline
-                  rows={2}
-                  value={currentMedication}
-                  onChange={(e) => {
-                    setCurrentMedication(e.target.value);
-                  }}
-                />
-                <TextField
-                  id="doctor_name"
-                  label="Doctor's name"
-                  margin="normal"
-                  value={familyDoctor}
-                  onChange={(e) => {
-                    setFamilyDoctor(e.target.value);
-                  }}
-                  required
-                  fullWidth
-                />
-                <TextField
-                  sx={{ marginBottom: "1rem" }}
-                  id="doctor_contact"
-                  label="Contact no."
-                  margin="normal"
-                  value={doctorContact}
-                  onChange={(e) => {
-                    setDoctorContact(e.target.value);
-                  }}
-                  required
-                  fullWidth
-                />
-                <Divider />
-                <Typography sx={{ marginTop: "1rem" }} variant="h6">
-                  In case of emergency
-                </Typography>
-                <TextField
-                  id="parent_name"
-                  label="Parent's name"
-                  margin="normal"
-                  value={parentName}
-                  onChange={(e) => {
-                    setParentName(e.target.value);
-                  }}
-                  required
-                  fullWidth
-                />
-                <TextField
-                  id="parent_contact"
-                  label="Contact no."
-                  margin="normal"
-                  value={parentContact}
-                  onChange={(e) => {
-                    setParentContact(e.target.value);
-                  }}
-                  required
-                  fullWidth
-                />
-                <TextField
-                  id="parent_address"
-                  label="Address"
-                  margin="normal"
-                  fullWidth
-                  multiline
-                  rows={2}
-                  value={parentAddress}
-                  sx={{ marginBottom: "1rem" }}
-                  onChange={(e) => {
-                    setParentAddress(e.target.value);
-                  }}
-                />
-                <Divider />
+                {membershipType == "admin" ? (
+                  <Typography></Typography>
+                ) : (
+                  <Container style={{ padding: 0 }}>
+                    <Typography sx={{ marginTop: "1rem" }} variant="h6">
+                      Medical information
+                    </Typography>
+                    <TextField
+                      id="medical_conditions"
+                      label="Medical conditions"
+                      margin="normal"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      value={medicalConditions}
+                      onChange={(e) => {
+                        setMedicalConditions(e.target.value);
+                      }}
+                    />
+                    <TextField
+                      id="allergies"
+                      label="Allergies"
+                      margin="normal"
+                      fullWidth
+                      multiline
+                      value={allergies}
+                      rows={2}
+                      onChange={(e) => {
+                        setAllergies(e.target.value);
+                      }}
+                    />
+                    <TextField
+                      id="current_medications"
+                      label="Current medications"
+                      margin="normal"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      value={currentMedication}
+                      onChange={(e) => {
+                        setCurrentMedication(e.target.value);
+                      }}
+                    />
+                    <TextField
+                      id="doctor_name"
+                      label="Doctor's name"
+                      margin="normal"
+                      value={familyDoctor}
+                      onChange={(e) => {
+                        setFamilyDoctor(e.target.value);
+                      }}
+                      required
+                      fullWidth
+                    />
+                    <TextField
+                      sx={{ marginBottom: "1rem" }}
+                      id="doctor_contact"
+                      label="Contact no."
+                      margin="normal"
+                      value={doctorContact}
+                      onChange={(e) => {
+                        setDoctorContact(e.target.value);
+                      }}
+                      required
+                      fullWidth
+                    />
+                    <Divider />
+                    <Typography sx={{ marginTop: "1rem" }} variant="h6">
+                      In case of emergency
+                    </Typography>
+                    <TextField
+                      id="parent_name"
+                      label="Parent's name"
+                      margin="normal"
+                      value={parentName}
+                      onChange={(e) => {
+                        setParentName(e.target.value);
+                      }}
+                      required
+                      fullWidth
+                    />
+                    <TextField
+                      id="parent_contact"
+                      label="Contact no."
+                      margin="normal"
+                      value={parentContact}
+                      onChange={(e) => {
+                        setParentContact(e.target.value);
+                      }}
+                      required
+                      fullWidth
+                    />
+                    <TextField
+                      id="parent_address"
+                      label="Address"
+                      margin="normal"
+                      fullWidth
+                      multiline
+                      rows={2}
+                      value={parentAddress}
+                      sx={{ marginBottom: "1rem" }}
+                      onChange={(e) => {
+                        setParentAddress(e.target.value);
+                      }}
+                    />
+                    <Divider />
+                  </Container>
+                )}
+
                 <Typography sx={{ marginTop: "1rem" }} variant="h6">
                   Membership
                 </Typography>
