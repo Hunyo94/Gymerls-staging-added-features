@@ -43,6 +43,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import PrintIcon from "@mui/icons-material/Print";
 import { cleanDigitSectionValue } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";
+import { YearCalendar } from "@mui/x-date-pickers";
 
 function User() {
   const relativeTime = require("dayjs/plugin/relativeTime");
@@ -208,6 +209,8 @@ function User() {
     setWeight(0);
     setOpen(false);
     setPrice(0);
+    setMembershipType("")
+    setMembershipPrice("")
   };
 
   // GENDER
@@ -1668,7 +1671,7 @@ function User() {
                     dayjs.extend(relativeTime);
 
                     var newDate = dayjs(formatBdate).fromNow(true);
-
+                    const validationYr = new Date(newValue).toLocaleDateString('en-us' ,{year:"numeric"})
                     let firstWord = newDate.split(" ")[0];
                     var ages = parseFloat(firstWord);
                     if (17 <= ages) {
@@ -1676,7 +1679,13 @@ function User() {
                     } else {
                       setMinAgeAlert(false);
                     }
-                    setAge(ages);
+                   
+                    if(validationYr <= new Date().toLocaleDateString('en-us', {year:"numeric"})-6 ){
+                     setAge(ages)
+                    }else{
+                      setAge("")
+                    }
+                    // setAge(ages);
                   }}
                   renderInput={(params) => <TextField {...params} />}
                 />
@@ -1955,7 +1964,7 @@ function User() {
                   ></TextField>
                 </Grid>
               </Grid>
-              <Grid container spacing={2}>
+              {membershipType == "" ? (<Typography variant="h1" color="initial"></Typography>):(    <Grid container spacing={2}>
                 <Grid item xs={6}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
@@ -1993,7 +2002,7 @@ function User() {
                     />
                   </LocalizationProvider>
                 </Grid>
-              </Grid>
+              </Grid>)}
             </DialogContent>
             <DialogActions>
               <Button variant="contained" color="error" onClick={handleClose}>
