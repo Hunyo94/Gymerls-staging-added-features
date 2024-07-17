@@ -1431,6 +1431,8 @@ function User() {
     } else setAdminRole(true);
   };
 
+
+
   return (
     <>
       {isLoading ? (
@@ -1445,6 +1447,10 @@ function User() {
       ) : (
         <div>
           <Grid container>
+
+     
+          
+
             <Grid item xs={3} md={2}>
               <Button variant="outlined" onClick={handleClickOpen}>
                 Create new user
@@ -1518,6 +1524,9 @@ function User() {
             open={open}
             aria-labelledby="responsive-dialog-title"
           >
+
+            
+   
             <DialogTitle id="responsive-dialog-title">
               {"CREATE NEW USER"}
             </DialogTitle>
